@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="title">
+  <title id="title">Retro color-bar television</title>
+  <defs>
+    <clipPath id="screen-clip">
+      <rect x="38" y="168" width="330" height="251" rx="25"/>
+    </clipPath>
+  </defs>
+
+  <!-- Consistent light background, including when shown in a dark browser theme -->
+  <rect width="512" height="512" fill="#f7f7f7"/>
+
+  <!-- Antenna -->
+  <path d="M179 4 239 112" stroke="#000" stroke-width="15" stroke-linecap="square"/>
+  <path d="M328 4 267 112" stroke="#000" stroke-width="15" stroke-linecap="square"/>
+
+  <!-- Bottom support: shadow under colored pedestal -->
+  <path d="M68 462H444V488H68Z" fill="#5731AE"/>
+  <path d="M61 482H451V510H61Z" fill="#000"/>
+  <path d="M76 477H436V495H76Z" fill="#6340C3"/>
+
+  <!-- TV enclosure -->
+  <rect x="8" y="137" width="496" height="324" fill="#E1D4C4" stroke="#000" stroke-width="15"/>
+  <path d="M15 447H497V461H15Z" fill="#BDAA92"/>
+
+  <!-- Screen: rounded color bars -->
+  <rect x="30" y="159" width="361" height="281" rx="34" fill="#000"/>
+  <g clip-path="url(#screen-clip)">
+    <rect x="38" y="168" width="78" height="251" fill="#F24E5D"/>
+    <rect x="116" y="168" width="86" height="251" fill="#FFDA49"/>
+    <rect x="202" y="168" width="86" height="251" fill="#69CBB2"/>
+    <rect x="288" y="168" width="80" height="251" fill="#FFA500"/>
+    <path d="M38 419V194q0-26 25-26h305v13H75q-22 0-22 22v216Z" fill="#000" opacity=".12"/>
+    <path d="M38 194q0-26 25-26h53v13H67q-14 0-14 16v222H38Z" fill="#F10F22"/>
+  </g>
+  <rect x="38" y="168" width="330" height="251" rx="25" fill="none" stroke="#000" stroke-width="0"/>
+
+  <!-- The test-screen exclamation and ellipsis -->
+  <path d="M74 199h15v50H74ZM74 265h15v15H74Z" fill="#fff"/>
+  <path d="M172 291h15v15h-15ZM203 291h15v15h-15ZM234 291h15v15h-15Z" fill="#000"/>
+
+  <!-- Upper knob -->
+  <circle cx="442" cy="211" r="51" fill="#BDAA92"/>
+  <circle cx="442" cy="211" r="38" fill="#000"/>
+  <circle cx="442" cy="211" r="23" fill="#B6F53B"/>
+  <path d="m428 196 22 21" stroke="#000" stroke-width="12"/>
+
+  <!-- Lower knob -->
+  <circle cx="442" cy="303" r="51" fill="#BDAA92"/>
+  <circle cx="442" cy="303" r="38" fill="#000"/>
+  <circle cx="442" cy="303" r="23" fill="#F34D61"/>
+  <path d="m428 288 22 21" stroke="#000" stroke-width="12"/>
+
+  <!-- 3 x 3 ventilation / controls -->
+  <path d="M406 362h15v15h-15ZM436 362h15v15h-15ZM466 362h15v15h-15Z
+           M406 393h15v15h-15ZM436 393h15v15h-15ZM466 393h15v15h-15Z
+           M406 423h15v15h-15ZM436 423h15v15h-15ZM466 423h15v15h-15Z" fill="#000"/>
+</svg>
