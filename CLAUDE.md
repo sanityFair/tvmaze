@@ -47,4 +47,4 @@ The structure follows a UI-tree-based layout inspired by Simple Architecture:
 - shadcn/ui is configured with the **`base-nova` style on Base UI** (`@base-ui/react`), not Radix. Components wrap `@base-ui/react/*` primitives and use `class-variance-authority` for variants, with a `data-slot` attribute on the root element.
 - Icon library for shadcn is **Phosphor** (`@phosphor-icons/react`); `lucide-react` is also installed.
 - Tailwind 4 is wired through `@tailwindcss/vite` — there is no `tailwind.config.*`; theme customization goes in `src/index.css` under `@theme inline`.
-- Fonts (self-hosted via `@fontsource-variable`): Geist (`--font-sans`), Public Sans (`--font-heading`), Roboto Slab (`--font-serif`).
+- Fonts (self-hosted via `@fontsource-variable`): JetBrains Mono (`--font-sans` and `--font-mono`, body/UI) and Oxanium (`--font-heading`, app name and large headings only). Custom animations (`animate-rise`, `animate-fade`, `animate-drift`) are defined in `src/index.css`; `prefers-reduced-motion` is honored globally.

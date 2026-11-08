@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="440" viewBox="0 0 720 440" fill="none" role="img" aria-labelledby="title desc">
+<title id="title">No shows found</title><desc id="desc">A dark cathode-ray screen with an empty search reticle and subtle red-cyan signal glitches.</desc>
+<defs>
+  <linearGradient id="chassis" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#363B40"/><stop offset=".26" stop-color="#202428"/><stop offset=".77" stop-color="#191B1F"/><stop offset="1" stop-color="#3B3F42"/></linearGradient>
+  <linearGradient id="bezel" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#62676B"/><stop offset=".2" stop-color="#2D3135"/><stop offset=".78" stop-color="#202326"/><stop offset="1" stop-color="#45494E"/></linearGradient>
+  <radialGradient id="screen"><stop stop-color="#293037"/><stop offset=".4" stop-color="#151A1F"/><stop offset="1" stop-color="#080A0E"/></radialGradient>
+  <radialGradient id="light"><stop stop-color="#8F9FA0" stop-opacity=".25"/><stop offset=".55" stop-color="#617C86" stop-opacity=".08"/><stop offset="1" stop-color="#657D82" stop-opacity="0"/></radialGradient>
+  <radialGradient id="ambient"><stop stop-color="#668087" stop-opacity=".15"/><stop offset="1" stop-color="#668087" stop-opacity="0"/></radialGradient>
+  <linearGradient id="beam" x1="0" x2=".8" y1="0" y2="1"><stop stop-color="#D5DEE0" stop-opacity=".19"/><stop offset="1" stop-color="#D5DEE0" stop-opacity="0"/></linearGradient>
+  <linearGradient id="gloss" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#F5FBFF" stop-opacity=".08"/><stop offset=".47" stop-color="#F5FBFF" stop-opacity="0"/></linearGradient>
+  <pattern id="scanlines" width="4" height="4" patternUnits="userSpaceOnUse"><path d="M0 3.5H4" stroke="#CBD5D6" stroke-opacity=".10" stroke-width=".7"/></pattern>
+  <clipPath id="screenClip"><rect x="180" y="113" width="368" height="226" rx="11"/></clipPath>
+  <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="8"/></filter>
+  <filter id="shadow" x="-25%" y="-40%" width="150%" height="200%"><feGaussianBlur stdDeviation="13"/></filter>
+  <style>
+    .tv-snow { animation: tv-snow 0.48s steps(1, end) infinite; }
+    .tv-roll { animation: tv-roll 6s linear infinite; }
+    .tv-jitter { animation: tv-jitter 4.2s steps(1, end) infinite; }
+    .tv-flicker { animation: tv-flicker 2.6s ease-in-out infinite; }
+    @keyframes tv-snow {
+      0% { transform: translate(0, 0); } 20% { transform: translate(-37px, -21px); }
+      40% { transform: translate(-11px, -63px); } 60% { transform: translate(-59px, -9px); }
+      80% { transform: translate(-23px, -47px); }
+    }
+    @keyframes tv-roll { from { transform: translateY(-70px); } to { transform: translateY(250px); } }
+    @keyframes tv-jitter {
+      0%, 84%, 100% { transform: none; } 86% { transform: translateX(3px); }
+      88% { transform: translateX(-2px); } 90% { transform: translateX(1px); }
+    }
+    @keyframes tv-flicker { 0%, 100% { opacity: 0.55; } 50% { opacity: 0.85; } }
+    @media (prefers-reduced-motion: reduce) {
+      .tv-snow, .tv-roll, .tv-jitter, .tv-flicker { animation: none; }
+    }
+  </style>
+  <filter id="tvNoise" x="0" y="0" width="100%" height="100%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.85 0.45" numOctaves="2" seed="7" stitchTiles="stitch"/>
+    <feColorMatrix type="saturate" values="0"/>
+    <feComponentTransfer><feFuncA type="table" tableValues="0 0.32"/></feComponentTransfer>
+  </filter>
+  <linearGradient id="tvRoll" x1="0" y1="0" x2="0" y2="1">
+    <stop stop-color="#DDE6E8" stop-opacity="0"/><stop offset=".5" stop-color="#DDE6E8" stop-opacity=".09"/><stop offset="1" stop-color="#DDE6E8" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+<g opacity=".5">
+  <ellipse cx="363" cy="385" rx="260" ry="21" fill="#000" filter="url(#shadow)"/>
+  <path d="M100 136H149M566 146H617M130 348H171M561 328H606" stroke="#586069" stroke-opacity=".28"/>
+  <circle cx="114" cy="136" r="2" fill="#B24C59" opacity=".65"/>
+  <circle cx="616" cy="146" r="2" fill="#4AC5D3" opacity=".58"/>
+</g>
+<path d="M150 89 L557 89 Q577 89 582 108 L589 347 Q590 366 570 374 L147 374 Q128 372 127 351 L129 119 Q130 93 150 89Z" fill="#000" opacity=".5" transform="translate(5 8)" filter="url(#shadow)"/>
+<path d="M151 88H557Q579 88 582 111L587 345Q589 371 565 375H148Q122 374 123 346L127 116Q127 89 151 88Z" fill="url(#chassis)" stroke="#61676B" stroke-opacity=".85" stroke-width="1.5"/>
+<path d="M151 100H556Q570 100 572 116L577 344Q579 357 564 360H149Q137 359 137 346L140 117Q140 101 151 100Z" fill="#0C0F12" stroke="#42464B" stroke-width="1"/>
+<rect x="169" y="104" width="390" height="244" rx="19" fill="url(#bezel)" stroke="#696D71" stroke-width=".8"/>
+<rect x="176" y="109" width="376" height="233" rx="14" fill="#050608"/>
+<rect x="180" y="113" width="368" height="226" rx="11" fill="url(#screen)"/>
+<path d="M192 116H535Q543 117 546 132V197C470 172 294 173 181 201V128Q182 117 192 116Z" fill="url(#gloss)" opacity=".36"/>
+<g stroke="#72797E" stroke-opacity=".52" fill="none" stroke-width="1.4">
+  <path d="M153 117H160M153 123H160"/><path d="M153 336H160M153 330H160"/>
+</g>
+<g fill="#353A3F">
+  <rect x="219" y="375" width="38" height="8" rx="2"/><rect x="484" y="375" width="38" height="8" rx="2"/>
+</g>
+<path d="M220 383L214 390H263L254 383M484 383L476 390H524L521 383" fill="#191B1F" stroke="#4D5358" stroke-width=".75"/>
+<g>
+  <circle cx="153" cy="159" r="5" fill="#15171A" stroke="#777B7D" stroke-width=".9"/><circle cx="153" cy="159" r="1.5" fill="#CE6A70"/>
+  <circle cx="153" cy="184" r="5" fill="#15171A" stroke="#777B7D" stroke-width=".9"/><path d="M153 182V186" stroke="#A7B0B1" stroke-width="1.2"/>
+  <path d="M149 223H157M149 229H157M149 235H157M149 241H157" stroke="#90999E" stroke-opacity=".48"/>
+</g>
+<path d="M180 347H548" stroke="#879397" stroke-opacity=".25" stroke-width="1"/>
+<path d="M157 92H550" stroke="#CAD0D2" stroke-opacity=".16" stroke-width="1"/>
+<path d="M106 185H132M588 273H616" stroke="#A8B2B5" stroke-opacity=".25"/>
+<path d="M96 213H127M587 248H626" stroke="#50B4BE" stroke-opacity=".36"/>
+<path d="M103 217H120M602 252H618" stroke="#CC4A59" stroke-opacity=".30"/>
+
+<g clip-path="url(#screenClip)"><g class="tv-jitter">
+  <rect x="180" y="113" width="368" height="226" fill="url(#scanlines)" class="tv-flicker"/>
+  <ellipse cx="363" cy="228" rx="170" ry="113" fill="url(#light)" opacity=".55"/>
+  <g opacity=".39" stroke="#95A3A7" stroke-width="1.1" fill="none">
+    <path d="M273 171H252V192M452 171H473V192M252 263V284H273M473 263V284H452"/>
+    <path d="M232 226H271M455 226H497M362 125V160M362 297V333" stroke-dasharray="4 7"/>
+  </g>
+  <circle cx="360" cy="224" r="74" fill="#101418" fill-opacity=".43" stroke="#727F84" stroke-width="1.5" stroke-opacity=".31"/>
+  <circle cx="360" cy="224" r="55" fill="none" stroke="#B9C1C2" stroke-width="3" stroke-opacity=".65" stroke-dasharray="210 25 75 27" transform="rotate(29 360 224)"/>
+  <path d="M402 266L433 298" stroke="#B9C1C2" stroke-width="10" stroke-linecap="square" opacity=".24"/>
+  <path d="M402 266L433 298" stroke="#DCE2E1" stroke-width="4" stroke-linecap="square" opacity=".74"/>
+  <path d="M342 205L379 242M379 205L342 242" stroke="#BA5361" stroke-width="3.1" stroke-linecap="square" opacity=".85"/>
+  <path d="M340 205L377 242M377 205L340 242" stroke="#4EB8C8" stroke-width="1.4" stroke-linecap="square" opacity=".67"/>
+  <rect x="190" y="156" width="355" height="1.8" fill="#69BAC5" opacity=".33"/>
+  <rect x="180" y="274" width="368" height="1.8" fill="#B9555C" opacity=".26"/>
+  <rect x="224" y="278" width="122" height="3" fill="#B9CACD" opacity=".12"/>
+  <rect x="410" y="154" width="80" height="4" fill="#97B7C0" opacity=".15"/>
+  <path d="M207 317H262M275 317H299M425 317H527" stroke="#7F9299" opacity=".23"/>
+  <g opacity=".54"><rect x="208" y="203" width="31" height="0.7" fill="#B9BFC0" opacity="0.1"/>
+<rect x="522" y="126" width="23" height="1.3" fill="#A85861" opacity="0.32"/>
+<rect x="197" y="276" width="39" height="1" fill="#B9BFC0" opacity="0.25"/>
+<rect x="378" y="122" width="20" height="1" fill="#9BC7C8" opacity="0.32"/>
+<rect x="366" y="198" width="54" height="1.3" fill="#B9BFC0" opacity="0.32"/>
+<rect x="488" y="273" width="8" height="1.8" fill="#A85861" opacity="0.1"/>
+<rect x="462" y="180" width="39" height="1.3" fill="#A85861" opacity="0.32"/>
+<rect x="287" y="198" width="21" height="1.8" fill="#758788" opacity="0.32"/>
+<rect x="368" y="183" width="54" height="0.7" fill="#A85861" opacity="0.1"/>
+<rect x="276" y="136" width="59" height="1.3" fill="#9BC7C8" opacity="0.1"/>
+<rect x="528" y="294" width="17" height="0.7" fill="#758788" opacity="0.25"/>
+<rect x="211" y="236" width="17" height="1.8" fill="#B9BFC0" opacity="0.32"/>
+<rect x="255" y="181" width="33" height="1.3" fill="#9BC7C8" opacity="0.1"/>
+<rect x="382" y="241" width="59" height="1.8" fill="#9BC7C8" opacity="0.1"/>
+<rect x="505" y="174" width="20" height="1.8" fill="#B9BFC0" opacity="0.1"/>
+<rect x="516" y="160" width="28" height="1.3" fill="#9BC7C8" opacity="0.1"/>
+<rect x="263" y="266" width="21" height="1.8" fill="#9BC7C8" opacity="0.25"/>
+<rect x="358" y="296" width="48" height="1" fill="#758788" opacity="0.1"/>
+<rect x="463" y="233" width="59" height="1" fill="#758788" opacity="0.1"/>
+<rect x="304" y="245" width="12" height="1.3" fill="#B9BFC0" opacity="0.32"/>
+<rect x="506" y="247" width="38" height="1" fill="#9BC7C8" opacity="0.18"/>
+<rect x="191" y="197" width="9" height="1.8" fill="#758788" opacity="0.25"/>
+<rect x="460" y="122" width="31" height="1.3" fill="#9BC7C8" opacity="0.32"/>
+<rect x="286" y="332" width="59" height="0.7" fill="#758788" opacity="0.18"/>
+<rect x="307" y="217" width="15" height="1.3" fill="#A85861" opacity="0.18"/>
+<rect x="286" y="269" width="24" height="1.3" fill="#A85861" opacity="0.1"/>
+<rect x="233" y="224" width="7" height="0.7" fill="#9BC7C8" opacity="0.1"/>
+<rect x="433" y="224" width="17" height="1.3" fill="#B9BFC0" opacity="0.18"/>
+<rect x="414" y="227" width="46" height="1.3" fill="#B9BFC0" opacity="0.1"/>
+<rect x="328" y="287" width="47" height="1" fill="#A85861" opacity="0.25"/>
+<rect x="290" y="144" width="7" height="0.7" fill="#B9BFC0" opacity="0.1"/>
+<rect x="490" y="221" width="54" height="1" fill="#9BC7C8" opacity="0.18"/>
+<rect x="356" y="249" width="22" height="0.7" fill="#A85861" opacity="0.25"/>
+<circle cx="473" cy="156" r="0.7" fill="#E8F6F4" opacity=".35"/>
+<circle cx="220" cy="154" r="0.7" fill="#E8F6F4" opacity=".35"/>
+<circle cx="428" cy="151" r="1.2" fill="#E8F6F4" opacity=".35"/>
+<circle cx="313" cy="191" r="0.9" fill="#E8F6F4" opacity=".35"/>
+<circle cx="442" cy="249" r="0.9" fill="#E8F6F4" opacity=".35"/></g>
+</g></g>
+<g clip-path="url(#screenClip)" pointer-events="none">
+  <g class="tv-snow"><rect x="180" y="113" width="440" height="300" fill="#000" filter="url(#tvNoise)" opacity=".5"/></g>
+  <g class="tv-roll"><rect x="180" y="113" width="368" height="52" fill="url(#tvRoll)"/></g>
+</g>
+</svg>

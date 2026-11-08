@@ -38,10 +38,45 @@ Readability and maintainability take priority over minimizing the number of file
 The directory structure MUST reflect the UI component hierarchy.
 
 - Every application component MUST have its own directory.
-- Each component directory MUST contain its View and the corresponding presentation logic when needed.
-- Components used by only one parent MUST be located inside that parent's directory.
-- Nested directories SHOULD reflect component ownership and UI relationships.
-  Determine component ownership before choosing its location.
+- Each component directory contains its View, presentation hooks, styles, and other component-specific logic.
+- All direct child components MUST be placed inside the parent's `components/` directory.
+- The same rule applies recursively at every level of the UI tree.
+- A `components/` directory contains component directories, not standalone View files.
+- Hooks, utilities, and other implementation details belong to the component they serve, outside its `components/` directory.
+- The filesystem hierarchy MUST reflect the component ownership hierarchy.
+
+Example:
+
+```text
+app/
+├── app.tsx
+└── components/
+    └── show-search/
+        ├── show-search.tsx
+        ├── use-show-search.ts
+        ├── use-results-filter.ts
+        ├── collect-genres.ts
+        └── components/
+            ├── search-bar/
+            │   └── search-bar.tsx
+            ├── genre-chips/
+            │   └── genre-chips.tsx
+            ├── show-list/
+            │   ├── show-list.tsx
+            │   └── components/
+            │       └── show-card/
+            │           └── show-card.tsx
+            └── results-pagination/
+                └── results-pagination.tsx
+```
+
+## 5. Component Reuse and Ownership
+
+- A component used by a single parent MUST remain in that parent's `components/` directory.
+- Components shared by multiple descendants SHOULD be placed in the `components/` directory of their nearest common ancestor.
+- Components shared across unrelated UI subtrees MAY be placed in a global `src/components/` directory.
+- Place components at the lowest level of the tree that satisfies their reuse requirements.
+- Do not move components to a broader scope without an actual reuse requirement.
 
 ## 4. Naming Conventions
 
