@@ -1,10 +1,16 @@
-export type PageItem = { type: 'page'; page: number } | { type: 'ellipsis'; key: string };
+export type PageItem =
+  | { type: 'page'; page: number; isActive: boolean }
+  | { type: 'ellipsis'; key: string };
 
 const MAX_VISIBLE_PAGES = 7;
 
 export const getPageItems = (page: number, totalPages: number): PageItem[] => {
   if (totalPages <= MAX_VISIBLE_PAGES) {
-    return Array.from({ length: totalPages }, (_, index) => ({ type: 'page', page: index + 1 }));
+    return Array.from({ length: totalPages }, (_, index) => ({
+      type: 'page',
+      page: index + 1,
+      isActive: index + 1 === page,
+    }));
   }
 
   const pages = [1, page - 1, page, page + 1, totalPages]
@@ -15,7 +21,7 @@ export const getPageItems = (page: number, totalPages: number): PageItem[] => {
 
   return pages.flatMap((value, index): PageItem[] => {
     const previous = pages[index - 1];
-    const item: PageItem = { type: 'page', page: value };
+    const item: PageItem = { type: 'page', page: value, isActive: value === page };
     return previous !== undefined && value - previous > 1
       ? [{ type: 'ellipsis', key: `after-${previous}` }, item]
       : [item];

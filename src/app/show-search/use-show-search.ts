@@ -1,8 +1,8 @@
 import debounce from 'debounce';
 import { useEffect, useState } from 'react';
 
-import { SEARCH_SHOWS_PATH, type TvMazeSearchResult } from '@/api/tvmaze';
-import { useApiQuery } from '@/hooks/use-api-query';
+import { SEARCH_SHOWS_PATH, type TvMazeSearchResult } from '~/api/tvmaze';
+import { useApiQuery } from '~/hooks/use-api-query';
 
 import { describeSearchError } from './describe-search-error';
 import { useResultsFilter } from './use-results-filter';
@@ -43,14 +43,22 @@ export const useShowSearch = () => {
     commitQuery(value.trim());
   };
 
+  const handleInputClear = () => {
+    commitQuery.clear();
+    setInputValue('');
+    setQuery('');
+  };
+
   return {
     inputValue,
     status,
     isLoading,
     hasResults: status === 'results',
+    hasGenreFilter: status === 'results' && filter.genres.length > 0,
     errorMessage,
     inlineErrorMessage: hasPreviousResponse ? errorMessage : null,
     onInputChange: handleInputChange,
+    onInputClear: handleInputClear,
     ...filter,
   };
 };

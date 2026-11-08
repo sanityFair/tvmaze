@@ -4,7 +4,7 @@ export type PageSlice<T> = {
   totalPages: number;
 };
 
-export const paginate = <T>(items: T[], requestedPage: number, pageSize: number): PageSlice<T> => {
+export const slicePage = <T>(items: T[], requestedPage: number, pageSize: number): PageSlice<T> => {
   const totalPages = Math.max(1, Math.ceil(items.length / pageSize));
   const page = Math.min(Math.max(1, requestedPage), totalPages);
   const start = (page - 1) * pageSize;

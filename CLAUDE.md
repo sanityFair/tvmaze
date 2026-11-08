@@ -27,10 +27,10 @@ Git hooks (Husky): `pre-commit` runs lint-staged (oxlint --fix + oxfmt --write o
 ## Tooling notes
 
 - **Oxlint/Oxfmt**, not ESLint/Prettier. Config in `.oxlintrc.json` and `.oxfmtrc.json`. Formatting: single quotes, semicolons, trailing commas, print width 100, 2-space indent.
-- Oxfmt sorts imports into groups separated by blank lines: builtin/external → internal (`@/...`) → relative → side-effect imports → styles. Let the formatter handle ordering.
-- Lint enforces `max-lines: 300` (excluding blanks/comments) per file, `react/rules-of-hooks`, `react/exhaustive-deps`, and `jsx-a11y`.
+- Oxfmt sorts imports into groups separated by blank lines: builtin/external → internal (`~/...`) → relative → side-effect imports → styles. Let the formatter handle ordering.
+- Lint enforces `max-lines: 120` (excluding blanks/comments) per file, with `src/ui-kit/` exempt, `react/rules-of-hooks`, `react/exhaustive-deps`, and `jsx-a11y`.
 - TypeScript uses `verbatimModuleSyntax` (use `import type` / inline `type` modifiers) and `erasableSyntaxOnly` (no enums, namespaces, or parameter properties).
-- Path alias `@/*` → `src/*` is configured in vite.config.ts, tsconfig.json, and tsconfig.app.json.
+- Path alias `~/*` → `src/*` is configured in vite.config.ts, tsconfig.json, and tsconfig.app.json.
 
 ## Architecture
 

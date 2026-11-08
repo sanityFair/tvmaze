@@ -1,10 +1,10 @@
 import { useMemo, useState } from 'react';
 
-import type { TvMazeSearchResult } from '@/api/tvmaze';
+import type { TvMazeSearchResult } from '~/api/tvmaze';
 
 import { collectGenres } from './collect-genres';
 import { formatResultsSummary } from './format-results-summary';
-import { paginate } from './paginate';
+import { slicePage } from './slice-page';
 
 const PAGE_SIZE = 3;
 
@@ -27,7 +27,7 @@ export const useResultsFilter = (results: TvMazeSearchResult[] | null) => {
     () => (selectedGenre ? shows.filter((show) => show.genres.includes(selectedGenre)) : shows),
     [shows, selectedGenre],
   );
-  const { items, page, totalPages } = paginate(filteredShows, requestedPage, PAGE_SIZE);
+  const { items, page, totalPages } = slicePage(filteredShows, requestedPage, PAGE_SIZE);
 
   const selectGenre = (genre: string | null) => {
     setFilter({ source: results, genre, page: 1 });

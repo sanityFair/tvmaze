@@ -13,10 +13,18 @@
     "max-lines": [
       "error",
       {
-        "max": 300,
+        "max": 120,
         "skipBlankLines": true,
         "skipComments": true
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/ui-kit/**"],
+      "rules": {
+        "max-lines": "off"
+      }
+    }
+  ]
 }

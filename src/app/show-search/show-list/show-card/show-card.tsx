@@ -1,7 +1,7 @@
 import { StarIcon, TelevisionSimpleIcon } from '@phosphor-icons/react';
 
-import type { TvMazeShow } from '@/api/tvmaze';
-import { Badge } from '@/ui-kit/badge';
+import type { TvMazeShow } from '~/api/tvmaze';
+import { Badge } from '~/ui-kit/badge';
 
 import { useShowCard } from './use-show-card';
 
@@ -54,7 +54,7 @@ export const ShowCard = ({ show }: ShowCardProps) => {
 
         {card.years && <p className="text-xs text-muted-foreground">{card.years}</p>}
 
-        {card.genres.length > 0 && (
+        {card.hasGenres && (
           <ul aria-label="Genres" className="flex flex-wrap gap-1.5">
             {card.genres.map((genre) => (
               <li key={genre}>

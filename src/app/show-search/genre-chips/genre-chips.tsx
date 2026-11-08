@@ -1,4 +1,4 @@
-import { ToggleGroup, ToggleGroupItem } from '@/ui-kit/toggle-group';
+import { ToggleGroup, ToggleGroupItem } from '~/ui-kit/toggle-group';
 
 import { ALL_GENRES, useGenreChips } from './use-genre-chips';
 

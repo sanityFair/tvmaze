@@ -1,12 +1,12 @@
 import { WarningCircleIcon } from '@phosphor-icons/react';
 
-import { Alert, AlertDescription, AlertTitle } from '@/ui-kit/alert';
-import { Spinner } from '@/ui-kit/spinner';
+import { Alert, AlertDescription, AlertTitle } from '~/ui-kit/alert';
+import { Spinner } from '~/ui-kit/spinner';
 
-import type { SearchStatus } from '../../use-show-search';
-import { FeedbackMessage } from './components/feedback-message/feedback-message';
-import nothingFoundIllustration from './illustrations/nothing-found.svg';
-import searchShowsIllustration from './illustrations/search-shows.svg';
+import type { SearchStatus } from '../use-show-search';
+import { FeedbackMessage } from './feedback-message/feedback-message';
+import nothingFoundIllustration from './nothing-found.svg';
+import searchShowsIllustration from './search-shows.svg';
 
 type SearchFeedbackProps = {
   status: SearchStatus;

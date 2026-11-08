@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { apiGet, toQueryString, type QueryParams } from '@/api/http-client';
+import { apiGet, toQueryString, type QueryParams } from '~/api/http-client';
 
 export type QueryOptions = {
   path: string;

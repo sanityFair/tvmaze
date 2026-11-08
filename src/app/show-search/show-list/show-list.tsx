@@ -1,6 +1,6 @@
-import type { TvMazeShow } from '@/api/tvmaze';
+import type { TvMazeShow } from '~/api/tvmaze';
 
-import { ShowCard } from './components/show-card/show-card';
+import { ShowCard } from './show-card/show-card';
 
 type ShowListProps = {
   shows: TvMazeShow[];

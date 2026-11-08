@@ -1,5 +1,5 @@
-import { BackdropSide } from './components/backdrop-side/backdrop-side';
-import { ShowSearch } from './components/show-search/show-search';
+import { BackdropSide } from './backdrop-side/backdrop-side';
+import { ShowSearch } from './show-search/show-search';
 
 export const App = () => (
   <div className="min-h-dvh bg-background md:grid md:grid-cols-[1fr_minmax(0,46rem)_1fr]">

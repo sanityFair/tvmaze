@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { TvMazeShow } from '@/api/tvmaze';
+import type { TvMazeShow } from '~/api/tvmaze';
 
 import { formatSummary } from './format-summary';
 
@@ -23,6 +23,7 @@ export const useShowCard = (show: TvMazeShow) => {
     posterUrl: show.image?.medium ?? null,
     years: getYears(show),
     genres: show.genres,
+    hasGenres: show.genres.length > 0,
     rating: rating === null ? null : rating.toFixed(1),
     ratingLabel: rating === null ? null : `Rated ${rating.toFixed(1)} out of 10`,
     summary: summary ?? 'No summary yet.',

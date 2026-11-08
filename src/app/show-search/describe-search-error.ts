@@ -1,4 +1,4 @@
-import { HttpError } from '@/api/http-client';
+import { HttpError } from '~/api/http-client';
 
 export const describeSearchError = (error: Error): string => {
   if (error instanceof HttpError) {

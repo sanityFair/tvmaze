@@ -6,7 +6,7 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from '@/ui-kit/pagination';
+} from '~/ui-kit/pagination';
 
 import { useResultsPagination } from './use-results-pagination';
 
@@ -40,7 +40,7 @@ export const ResultsPagination = (props: ResultsPaginationProps) => {
           ) : (
             <PaginationItem key={item.page}>
               <PaginationLink
-                isActive={item.page === pagination.page}
+                isActive={item.isActive}
                 aria-label={`Page ${item.page}`}
                 onClick={() => pagination.goToPage(item.page)}
                 className="tabular-nums"
