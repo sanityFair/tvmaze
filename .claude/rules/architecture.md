@@ -2,34 +2,37 @@
 
 ## 1. View and Presenter Separation
 
-Every application component follows the View/Presenter pattern.
+Application components follow the View/Presenter pattern when presentation logic is required.
 
 ### View
 
 - MUST be responsible for rendering JSX.
 - MUST NOT contain business logic, state management, effects, data fetching, validation, or data transformations.
-- MUST delegate behavior and data preparation to a dedicated hook.
-- MAY import child View components, UI primitives, and styles.
-- MUST receive the data and event handlers required for rendering from its hook.
+- MUST delegate behavior and data preparation to dedicated hooks when needed.
+- MAY use `.map()`, conditional rendering, and early returns based on prepared values.
+- MAY import child components, UI primitives, and styles.
+- MUST use prepared data and event handlers rather than implement application logic inline.
+- Purely presentational components do not require a Presenter hook.
 
 ### Presenter
 
 - MUST be implemented as a React hook.
-- MUST use a descriptive name reflecting its responsibility, such as `useSearch`, `useSuggestions`, or `usePagination`.
-- MUST encapsulate the logic required by its View.
-- MUST prepare data and event handlers for rendering.
+- MUST have a descriptive name reflecting its responsibility.
+- MUST encapsulate the presentation logic required by its View.
+- MUST prepare data, derived values, and event handlers for rendering.
 - MAY delegate responsibilities to smaller, specialized hooks and pure functions.
 - SHOULD expose a minimal, explicit interface to the View.
 
-Do not move application logic into the View to avoid creating additional modules.
+Presentation logic belongs outside the View, while rendering decisions remain in the View.
 
 ## 2. File Size
 
-- Source files MUST NOT exceed 120 lines of code.
+- Application source files MUST NOT exceed 120 lines of code.
 - Split large files into smaller modules with clear responsibilities.
 - Prefer meaningful abstractions over code compression.
 - Extract independent logic into dedicated hooks or functions.
 - Do not create abstractions solely to satisfy the line limit.
+- Generated UI-kit components and third-party code are exempt from this constraint.
 
 Readability and maintainability take priority over minimizing the number of files.
 
@@ -38,10 +41,35 @@ Readability and maintainability take priority over minimizing the number of file
 The directory structure MUST reflect the UI component hierarchy.
 
 - Every application component MUST have its own directory.
-- Each component directory MUST contain its View and the corresponding presentation logic when needed.
-- Components used by only one parent MUST be located inside that parent's directory.
-- Nested directories SHOULD reflect component ownership and UI relationships.
-  Determine component ownership before choosing its location.
+- Organize component directories according to the UI hierarchy and component ownership.
+- Keep components used by a single parent directly inside that parent's directory.
+- Colocate component-specific hooks, utilities, styles, and assets.
+- Use `components/` only for reusable components (see section 5).
+- Avoid unnecessary directory nesting that does not represent component ownership.
+
+Example:
+
+```text
+app/
+├── app.tsx
+└── show-search/
+    ├── show-search.tsx
+    ├── use-show-search.ts
+    ├── use-results-filter.ts
+    ├── collect-genres.ts
+    ├── search-bar/
+    │   ├── search-bar.tsx
+    │   └── use-search-bar.ts
+    ├── genre-chips/
+    │   ├── genre-chips.tsx
+    │   └── use-genre-chips.ts
+    ├── show-list/
+    │   ├── show-list.tsx
+    │   └── show-card/
+    │       └── show-card.tsx
+    └── results-pagination/
+        └── results-pagination.tsx
+```
 
 ## 4. Naming Conventions
 
@@ -50,7 +78,7 @@ Names MUST describe responsibilities rather than architectural implementation de
 - View filenames MUST match their component directory names.
 - Hooks MUST use descriptive names beginning with `use`.
 - Helper functions MUST describe their behavior.
-- Avoid generic names such as `usePresenter`, `useLogic`, `helpers`, or `common`.
+- Follow existing project naming conventions consistently.
 
 Example:
 
@@ -62,17 +90,31 @@ search/
 └── validate-query.ts
 ```
 
-## 5. Reusable Components
+## 5. Component Reuse and Ownership
 
-The `components/` directory is reserved for reusable application components.
+The `components/` directory is reserved for reusable application components and defines the intended scope of their reuse.
 
-- A component used only once MUST remain inside its parent's directory.
-- Components reused within a specific UI subtree SHOULD be placed in a `components/` directory within that subtree.
-- Components reused across unrelated subtrees MAY be moved to a global `src/components/` directory.
-- Reusable components MUST follow the same View/Presenter separation.
-- Do not create shared abstractions without an actual reuse requirement.
+- Components used by a single parent belong directly in that parent's directory.
+- Components shared within a UI subtree SHOULD be placed in the `components/` directory of their nearest common ancestor.
+- Components shared across unrelated UI subtrees MAY be placed in a global `src/components/` directory.
+- Place components at the lowest level of the tree that satisfies their reuse requirements.
+- Do not create shared abstractions or broaden component scope without a concrete reuse requirement.
+- Reusable application components follow the same View/Presenter principles.
 
-A `components/` directory defines the intended scope of component reuse.
+Example (`show-poster` is shared by `show-card` and `show-details`):
+
+```text
+show-search/
+├── show-search.tsx
+├── components/
+│   └── show-poster/
+│       └── show-poster.tsx
+├── show-list/
+│   └── show-card/
+│       └── show-card.tsx
+└── show-details/
+    └── show-details.tsx
+```
 
 ## 6. UI Kit
 
@@ -82,7 +124,7 @@ A `components/` directory defines the intended scope of component reuse.
 - MAY be imported by application Views.
 - Generated UI primitives are exempt from application-specific View/Presenter conventions.
 - Preserve upstream component implementations unless customization is required.
-- Do not introduce unnecessary wrappers around UI-kit components.
+- Avoid unnecessary wrappers around UI-kit components.
 
 ## 7. Architectural Decisions
 
@@ -92,13 +134,14 @@ Before introducing a new component or module:
 2. Determine its position in the UI tree.
 3. Identify its owner and potential consumers.
 4. Separate rendering from behavior and data preparation.
-5. Use descriptive filenames and function names.
-6. Keep modules focused and within the file-size limit.
+5. Choose descriptive names.
+6. Keep modules focused and maintainable.
 
 When modifying existing functionality:
 
 - Preserve established architectural boundaries.
 - Prefer localized changes.
 - Avoid unrelated structural refactoring.
-- Do not introduce unnecessary architectural layers.
-- Explain deviations from existing conventions.
+- Do not introduce architectural layers without a concrete need.
+- If a requirement conflicts with an existing rule, discuss the rule before bypassing it.
+- Prefer simple solutions over unnecessary abstractions.

@@ -4,10 +4,11 @@ import path from 'node:path';
 import { defineConfig } from 'vite';
 
 export default defineConfig({
+  base: process.env.GITHUB_ACTIONS === 'true' ? '/tvmaze/' : '/',
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {
-      '@': path.resolve(import.meta.dirname, './src'),
+      '~': path.resolve(import.meta.dirname, './src'),
     },
   },
 });

@@ -27,10 +27,10 @@ Git hooks (Husky): `pre-commit` runs lint-staged (oxlint --fix + oxfmt --write o
 ## Tooling notes
 
 - **Oxlint/Oxfmt**, not ESLint/Prettier. Config in `.oxlintrc.json` and `.oxfmtrc.json`. Formatting: single quotes, semicolons, trailing commas, print width 100, 2-space indent.
-- Oxfmt sorts imports into groups separated by blank lines: builtin/external → internal (`@/...`) → relative → side-effect imports → styles. Let the formatter handle ordering.
-- Lint enforces `max-lines: 300` (excluding blanks/comments) per file, `react/rules-of-hooks`, `react/exhaustive-deps`, and `jsx-a11y`.
+- Oxfmt sorts imports into groups separated by blank lines: builtin/external → internal (`~/...`) → relative → side-effect imports → styles. Let the formatter handle ordering.
+- Lint enforces `max-lines: 120` (excluding blanks/comments) per file, with `src/ui-kit/` exempt, `react/rules-of-hooks`, `react/exhaustive-deps`, and `jsx-a11y`.
 - TypeScript uses `verbatimModuleSyntax` (use `import type` / inline `type` modifiers) and `erasableSyntaxOnly` (no enums, namespaces, or parameter properties).
-- Path alias `@/*` → `src/*` is configured in vite.config.ts, tsconfig.json, and tsconfig.app.json.
+- Path alias `~/*` → `src/*` is configured in vite.config.ts, tsconfig.json, and tsconfig.app.json.
 
 ## Architecture
 
@@ -47,4 +47,4 @@ The structure follows a UI-tree-based layout inspired by Simple Architecture:
 - shadcn/ui is configured with the **`base-nova` style on Base UI** (`@base-ui/react`), not Radix. Components wrap `@base-ui/react/*` primitives and use `class-variance-authority` for variants, with a `data-slot` attribute on the root element.
 - Icon library for shadcn is **Phosphor** (`@phosphor-icons/react`); `lucide-react` is also installed.
 - Tailwind 4 is wired through `@tailwindcss/vite` — there is no `tailwind.config.*`; theme customization goes in `src/index.css` under `@theme inline`.
-- Fonts (self-hosted via `@fontsource-variable`): Geist (`--font-sans`), Public Sans (`--font-heading`), Roboto Slab (`--font-serif`).
+- Fonts (self-hosted via `@fontsource-variable`): JetBrains Mono (`--font-sans` and `--font-mono`, body/UI) and Oxanium (`--font-heading`, app name and large headings only). Custom animations (`animate-rise`, `animate-fade`, `animate-drift`) are defined in `src/index.css`; `prefers-reduced-motion` is honored globally.
