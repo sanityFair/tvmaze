@@ -1,0 +1,26 @@
+{
+  "name": "@tvmaze/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsc -p tsconfig.build.json && concurrently -k -n tsc,api -c blue,green \"tsc -p tsconfig.build.json --watch --preserveWatchOutput\" \"node --watch --env-file-if-exists=.env dist/main.js\"",
+    "build": "tsc -p tsconfig.build.json",
+    "start": "node --env-file-if-exists=.env dist/main.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@nestjs/common": "^12.5.0",
+    "@nestjs/core": "^12.5.0",
+    "@nestjs/platform-express": "^12.5.0",
+    "entities": "^9.0.0",
+    "reflect-metadata": "^0.2.2",
+    "rxjs": "^7.8.2"
+  },
+  "devDependencies": {
+    "@tvmaze/contracts": "workspace:*",
+    "@types/node": "^24.19.2",
+    "concurrently": "^10.0.7",
+    "typescript": "~7.0.2"
+  }
+}

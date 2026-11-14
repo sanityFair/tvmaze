@@ -1,50 +1,73 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Этот файл содержит инструкции для Claude Code (claude.ai/code) по работе с кодом в этом репозитории.
 
-## Project
+## Проект
 
-A React 19 + TypeScript + Vite app for exploring TV shows via the [TVMaze API](https://www.tvmaze.com/api). Built as part of the **Simple Architecture** bootcamp: the emphasis is on frontend architecture, separation of concerns, and maintainability, and the folder structure is expected to evolve as architectural principles are introduced. Package manager is **pnpm** (Node 22.12+ or 20.19+).
+**Монорепозиторий на pnpm workspaces** для поиска сериалов через [TVMaze API](https://www.tvmaze.com/api): фронтенд на React 19 + Vite и бэкенд на NestJS. Проект создаётся в рамках буткемпа **Simple Architecture**: акцент на архитектуре, разделении ответственности и поддерживаемости, структура будет развиваться по мере изучения архитектурных принципов. Node 22.12+ или 20.19+.
 
-## Commands
+- `apps/web` (`@tvmaze/web`) — фронтенд на React. Обращается только к бэкенду через относительные URL `/api`; в `dev` и `preview` Vite проксирует `/api` на `API_URL` (по умолчанию `http://localhost:3000`).
+- `apps/api` (`@tvmaze/api`) — бэкенд на NestJS: клиент TVMaze с кешем в памяти на 5 минут, поиск, фильтрация по жанрам, пагинация, избранное. Базы данных нет: всё состояние хранится в памяти сервера.
+- `packages/contracts` (`@tvmaze/contracts`) — пакет только с типами запросов и ответов API, общий для web и api. Сборки нет; потребители импортируют его `src` через `import type`.
+
+## Команды
+
+Запускаются из корня репозитория:
 
 ```bash
-pnpm dev            # Vite dev server (http://localhost:5173)
-pnpm build          # tsc -b && vite build
-pnpm preview        # serve the production build
-pnpm typecheck      # tsc -b (project references: tsconfig.app.json + tsconfig.node.json)
-pnpm lint           # oxlint
+pnpm dev            # api + web параллельно
+pnpm dev:api        # только api (tsc --watch + node --watch, http://localhost:3000)
+pnpm dev:web        # только web (http://localhost:5173)
+pnpm build          # собрать все пакеты
+pnpm start          # запустить собранный api
+pnpm preview        # раздать собранный web
+pnpm typecheck      # tsc во всех пакетах
+pnpm lint           # oxlint (весь репозиторий)
 pnpm lint:fix       # oxlint --fix
-pnpm format         # oxfmt (writes)
+pnpm format         # oxfmt (с записью)
 pnpm format:check   # oxfmt --check
-pnpm check          # typecheck + lint + format:check — run before committing
+pnpm check          # typecheck + lint + format:check — запускать перед коммитом
 ```
 
-There is no test runner configured yet.
+Зависимости добавляются в пакет командой `pnpm --filter @tvmaze/<web|api> add <pkg>`. Тестовый раннер пока не настроен.
 
-Git hooks (Husky): `pre-commit` runs lint-staged (oxlint --fix + oxfmt --write on staged files); `commit-msg` runs commitlint with `@commitlint/config-conventional`, so commit messages must follow Conventional Commits (`feat: ...`, `fix: ...`, `chore: ...`).
+Git-хуки (Husky): `pre-commit` запускает lint-staged (oxlint --fix + oxfmt --write для staged-файлов); `commit-msg` запускает commitlint с `@commitlint/config-conventional`, поэтому сообщения коммитов должны следовать Conventional Commits (`feat: ...`, `fix: ...`, `chore: ...`).
 
-## Tooling notes
+## Инструменты
 
-- **Oxlint/Oxfmt**, not ESLint/Prettier. Config in `.oxlintrc.json` and `.oxfmtrc.json`. Formatting: single quotes, semicolons, trailing commas, print width 100, 2-space indent.
-- Oxfmt sorts imports into groups separated by blank lines: builtin/external → internal (`~/...`) → relative → side-effect imports → styles. Let the formatter handle ordering.
-- Lint enforces `max-lines: 120` (excluding blanks/comments) per file, with `src/ui-kit/` exempt, `react/rules-of-hooks`, `react/exhaustive-deps`, and `jsx-a11y`.
-- TypeScript uses `verbatimModuleSyntax` (use `import type` / inline `type` modifiers) and `erasableSyntaxOnly` (no enums, namespaces, or parameter properties).
-- Path alias `~/*` → `src/*` is configured in vite.config.ts, tsconfig.json, and tsconfig.app.json.
+- **Oxlint/Oxfmt** вместо ESLint/Prettier, настроены один раз в корне (`.oxlintrc.json`, `.oxfmtrc.json`). Форматирование: одинарные кавычки, точки с запятой, завершающие запятые, ширина строки 100, отступ 2 пробела.
+- Oxfmt сортирует импорты по группам, разделённым пустой строкой: builtin/external → internal (`~/...`) → относительные → side-effect импорты → стили. Порядок оставляем форматтеру.
+- Линтер требует `max-lines: 120` на файл (без пустых строк и комментариев), кроме `apps/web/src/ui-kit/`, а также `react/rules-of-hooks`, `react/exhaustive-deps` и `jsx-a11y`.
+- Везде TypeScript 7 с `verbatimModuleSyntax` (используйте `import type` / inline-модификатор `type`).
+- **web**: `erasableSyntaxOnly` (без enum, namespace и parameter properties). Алиас `~/*` → `apps/web/src/*` (vite.config.ts, tsconfig.json, tsconfig.app.json).
+- **api**: ESM (`"type": "module"`, Nest 12 поддерживает только ESM), поэтому относительные импорты заканчиваются на `.js`. Включены `experimentalDecorators` и `emitDecoratorMetadata`, `erasableSyntaxOnly` выключен, поэтому для DI используются parameter properties в конструкторе. Сборка обычным `tsc`; Nest CLI не используется (он опирается на JS API TypeScript, которого нет в TS 7). Переменные окружения: `PORT`, `TVMAZE_BASE_URL` (см. `apps/api/.env.example`, загружаются через `node --env-file-if-exists`).
 
-## Architecture
+## Архитектура
 
-The structure follows a UI-tree-based layout inspired by Simple Architecture:
+### web (`apps/web/src`)
 
-- `src/main.tsx` — entry point; mounts `App` in `StrictMode` and imports `index.css`.
-- `src/app/` — application root and the UI hierarchy (features/screens live under here as the app grows).
-- `src/ui-kit/` — reusable shadcn/ui primitives. **This is the shadcn `ui` alias** (see `components.json`): `pnpm dlx shadcn add <component>` installs into `src/ui-kit/`, not `src/components/ui/`.
-- `src/lib/` — shared technical utilities. `cn` is re-exported from the `cn` npm package via `src/lib/utils.ts`.
-- `src/index.css` — Tailwind 4 entry (`@import 'tailwindcss'`), shadcn theme tokens as CSS variables (oklch), dark mode via `.dark` class (`@custom-variant dark`), and font registration.
+Структура по дереву UI в духе Simple Architecture (см. `.claude/rules/architecture.md`). Прикладные слои (компоненты, Presenter-ы, Tasks, хранилища) живут только внутри `app/`; вне его — только технические модули (`api/`, `lib/`, `ui-kit/`):
 
-### UI stack specifics
+- `main.tsx` — точка входа; монтирует `App` в `StrictMode` и импортирует `index.css`.
+- `app/` — корень приложения и иерархия UI (кнопка избранного в шапке переключает между `show-search/` и `favorite-shows/`).
+- `app/components/` — компоненты, которые используют независимые поддеревья (`show-card`, `feedback-message`).
+- `app/logic/` — Presenter корня, а также хранилище и Tasks, общие для нескольких поддеревьев (`favorites.store.ts`, `tasks/` избранного).
+- `api/` — HTTP-клиент для бэкенда (`apiRequest`, `HttpError`).
+- `ui-kit/` — переиспользуемые примитивы shadcn/ui. **Это алиас `ui` для shadcn** (см. `components.json`): `pnpm dlx shadcn add <component>` запускается внутри `apps/web` и устанавливает компонент в `src/ui-kit/`.
+- `lib/` — общие технические утилиты. `cn` реэкспортируется из npm-пакета `cn` через `lib/utils.ts`.
+- `index.css` — точка входа Tailwind 4, токены темы shadcn в CSS-переменных (oklch), тёмная тема через класс `.dark`, подключение шрифтов.
 
-- shadcn/ui is configured with the **`base-nova` style on Base UI** (`@base-ui/react`), not Radix. Components wrap `@base-ui/react/*` primitives and use `class-variance-authority` for variants, with a `data-slot` attribute on the root element.
-- Icon library for shadcn is **Phosphor** (`@phosphor-icons/react`); `lucide-react` is also installed.
-- Tailwind 4 is wired through `@tailwindcss/vite` — there is no `tailwind.config.*`; theme customization goes in `src/index.css` under `@theme inline`.
-- Fonts (self-hosted via `@fontsource-variable`): JetBrains Mono (`--font-sans` and `--font-mono`, body/UI) and Oxanium (`--font-heading`, app name and large headings only). Custom animations (`animate-rise`, `animate-fade`, `animate-drift`) are defined in `src/index.css`; `prefers-reduced-motion` is honored globally.
+Фильтрация и пагинация выполняются на сервере. `show-search.store.ts` хранит параметры поиска (`query`, `genre`, `page`) и последний ответ; Presenter-ы вызывают только действия хранилища (`setQuery`, `selectGenre`, `goToPage`). `useShowSearch` (Presenter владельца `show-search`) перезапускает единственную Task `loadShows` при изменении параметров; Task читает их из хранилища, запрашивает одну страницу у `/api/shows` и отменяет предыдущий запрос.
+
+### api (`apps/api/src`)
+
+- `tvmaze/` — `TvMazeClient` (единственное место, где идут запросы к TVMaze), `tvmaze.cache.ts` (`const cache = {}` с TTL 5 минут, ключ — путь + нормализованный запрос), преобразование ошибок (429 → 429, 404 → 404, остальные сбои → 502).
+- `shows/` — `GET /api/shows`: разбор и валидация параметров, фильтр по жанру, пагинация.
+- `favorites/` — `GET/PUT/DELETE /api/favorites`: `const favorite = {}` с ключом по id шоу; данные шоу запрашиваются через `TvMazeClient` (с кешем).
+
+### Особенности UI-стека
+
+- shadcn/ui настроен со **стилем `base-nova` на Base UI** (`@base-ui/react`), а не на Radix. Компоненты оборачивают примитивы `@base-ui/react/*`, используют `class-variance-authority` для вариантов и атрибут `data-slot` на корневом элементе.
+- Библиотека иконок для shadcn — **Phosphor** (`@phosphor-icons/react`); `lucide-react` тоже установлен.
+- Tailwind 4 подключён через `@tailwindcss/vite` — `tailwind.config.*` нет; кастомизация темы в `src/index.css` внутри `@theme inline`.
+- Шрифты (self-hosted через `@fontsource-variable`): JetBrains Mono (`--font-sans` и `--font-mono`, основной текст и UI) и Oxanium (`--font-heading`, только название приложения и крупные заголовки). Кастомные анимации (`animate-rise`, `animate-fade`, `animate-drift`) и утилиты (`vhs-spine`, `vhs-vertical`) определены в `src/index.css`; `prefers-reduced-motion` учитывается глобально.
