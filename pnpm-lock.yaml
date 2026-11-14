@@ -7,6 +7,27 @@ settings:
 importers:
 
   .:
+    devDependencies:
+      '@commitlint/cli':
+        specifier: ^21.2.4
+        version: 21.2.4(conventional-commits-parser@7.1.4)(typescript@7.0.2)
+      '@commitlint/config-conventional':
+        specifier: ^21.2.4
+        version: 21.2.4
+      husky:
+        specifier: ^9.1.7
+        version: 9.1.7
+      lint-staged:
+        specifier: ^17.6.0
+        version: 17.6.0
+      oxfmt:
+        specifier: ^0.77.0
+        version: 0.77.0
+      oxlint:
+        specifier: ^1.90.0
+        version: 1.92.0
+
+  apps/web:
     dependencies:
       '@base-ui/react':
         specifier: ^1.9.0
@@ -54,12 +75,6 @@ importers:
         specifier: ^5.1.0
         version: 5.1.0(@types/react@19.3.0)(react@19.3.1)(use-sync-external-store@1.7.0(react@19.3.1))
     devDependencies:
-      '@commitlint/cli':
-        specifier: ^21.2.4
-        version: 21.2.4(conventional-commits-parser@7.1.4)(typescript@7.0.2)
-      '@commitlint/config-conventional':
-        specifier: ^21.2.4
-        version: 21.2.4
       '@types/node':
         specifier: ^24.19.2
         version: 24.19.2
@@ -72,18 +87,6 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.1.2
         version: 6.2.1(vite@8.3.6(@types/node@24.19.2)(jiti@2.7.0)(yaml@2.9.1))
-      husky:
-        specifier: ^9.1.7
-        version: 9.1.7
-      lint-staged:
-        specifier: ^17.6.0
-        version: 17.6.0
-      oxfmt:
-        specifier: ^0.77.0
-        version: 0.77.0
-      oxlint:
-        specifier: ^1.90.0
-        version: 1.92.0
       typescript:
         specifier: ~7.0.2
         version: 7.0.2

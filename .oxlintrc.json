@@ -21,7 +21,7 @@
   },
   "overrides": [
     {
-      "files": ["src/ui-kit/**"],
+      "files": ["apps/web/src/ui-kit/**"],
       "rules": {
         "max-lines": "off"
       }
