@@ -1,12 +1,13 @@
-import { StarIcon, TelevisionSimpleIcon } from '@phosphor-icons/react';
+import { HeartIcon, StarIcon, TelevisionSimpleIcon } from '@phosphor-icons/react';
+import type { Show } from '@tvmaze/contracts';
 
-import type { TvMazeShow } from '~/api/tvmaze';
 import { Badge } from '~/ui-kit/badge';
+import { Toggle } from '~/ui-kit/toggle';
 
 import { useShowCard } from './logic/use-show-card';
 
 type ShowCardProps = {
-  show: TvMazeShow;
+  show: Show;
 };
 
 export const ShowCard = ({ show }: ShowCardProps) => {
@@ -43,13 +44,24 @@ export const ShowCard = ({ show }: ShowCardProps) => {
               <span className="sr-only"> (opens on TVMaze in a new tab)</span>
             </a>
           </h2>
-          {card.rating && (
-            <p className="flex shrink-0 items-center gap-1 pt-1 text-sm tabular-nums">
-              <StarIcon aria-hidden weight="fill" className="size-3.5 text-rating" />
-              <span aria-hidden>{card.rating}</span>
-              <span className="sr-only">{card.ratingLabel}</span>
-            </p>
-          )}
+          <div className="flex shrink-0 items-center gap-2">
+            {card.rating && (
+              <p className="flex items-center gap-1 text-sm tabular-nums">
+                <StarIcon aria-hidden weight="fill" className="size-3.5 text-rating" />
+                <span aria-hidden>{card.rating}</span>
+                <span className="sr-only">{card.ratingLabel}</span>
+              </p>
+            )}
+            <Toggle
+              size="sm"
+              aria-label={card.favoriteLabel}
+              pressed={card.isFavorite}
+              onPressedChange={card.onToggleFavorite}
+              className="relative z-10 -my-1 text-muted-foreground hover:bg-white/5 hover:text-foreground aria-pressed:bg-transparent aria-pressed:text-destructive"
+            >
+              <HeartIcon aria-hidden weight={card.isFavorite ? 'fill' : 'regular'} />
+            </Toggle>
+          </div>
         </div>
 
         {card.years && <p className="text-xs text-muted-foreground">{card.years}</p>}

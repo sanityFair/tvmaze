@@ -1,10 +1,12 @@
+import type { Show } from '@tvmaze/contracts';
 import { useMemo } from 'react';
 
-import type { TvMazeShow } from '~/api/tvmaze';
+import { selectIsFavorite, useFavoritesStore } from '~/stores/favorites.store';
+import { toggleFavorite } from '~/tasks/toggle-favorite';
 
 import { formatSummary } from './format-summary';
 
-const getYears = ({ premiered, ended }: TvMazeShow): string | null => {
+const getYears = ({ premiered, ended }: Show): string | null => {
   const start = premiered?.slice(0, 4);
   const end = ended?.slice(0, 4);
 
@@ -13,8 +15,9 @@ const getYears = ({ premiered, ended }: TvMazeShow): string | null => {
   return start === end ? start : `${start}–${end}`;
 };
 
-export const useShowCard = (show: TvMazeShow) => {
+export const useShowCard = (show: Show) => {
   const summary = useMemo(() => formatSummary(show.summary), [show.summary]);
+  const isFavorite = useFavoritesStore(selectIsFavorite(show.id));
   const rating = show.rating.average;
 
   return {
@@ -28,5 +31,8 @@ export const useShowCard = (show: TvMazeShow) => {
     ratingLabel: rating === null ? null : `Rated ${rating.toFixed(1)} out of 10`,
     summary: summary ?? 'No summary yet.',
     hasSummary: summary !== null,
+    isFavorite,
+    favoriteLabel: `Favorite ${show.name}`,
+    onToggleFavorite: () => void toggleFavorite(show),
   };
 };

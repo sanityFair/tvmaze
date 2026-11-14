@@ -1,5 +1,6 @@
+import { ShowCard } from '~/components/show-card/show-card';
+
 import { useShowList } from './logic/use-show-list';
-import { ShowCard } from './show-card/show-card';
 
 export const ShowList = () => {
   const list = useShowList();

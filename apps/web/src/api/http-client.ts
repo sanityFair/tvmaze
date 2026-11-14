@@ -1,18 +1,26 @@
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+import type { ApiErrorBody } from '@tvmaze/contracts';
+
+const API_PREFIX = '/api';
 
 export type QueryParams = Record<string, string | number | boolean | null | undefined>;
+
+type RequestOptions = {
+  method?: 'GET' | 'PUT' | 'DELETE';
+  query?: QueryParams;
+  signal?: AbortSignal;
+};
 
 export class HttpError extends Error {
   readonly status: number;
 
-  constructor(status: number, statusText: string, url: URL) {
-    super(`GET ${url.pathname} failed with ${status}${statusText ? ` ${statusText}` : ''}`);
+  constructor(status: number, message: string) {
+    super(message);
     this.name = 'HttpError';
     this.status = status;
   }
 }
 
-export function toQueryString(params: QueryParams = {}): string {
+export const toQueryString = (params: QueryParams = {}): string => {
   const searchParams = new URLSearchParams();
 
   for (const key of Object.keys(params).sort()) {
@@ -23,17 +31,29 @@ export function toQueryString(params: QueryParams = {}): string {
   }
 
   return searchParams.toString();
-}
+};
 
-export async function apiGet<T>(path: string, query: string, signal?: AbortSignal): Promise<T> {
-  const url = new URL(path, BASE_URL);
-  url.search = query;
+const readErrorMessage = async (response: Response): Promise<string> => {
+  try {
+    const body = (await response.json()) as Partial<ApiErrorBody>;
+    if (typeof body.message === 'string') return body.message;
+  } catch {
+    // Non-JSON error body: fall back to the status text.
+  }
+  return `Request failed with ${response.status} ${response.statusText}`.trim();
+};
 
-  const response = await fetch(url, { signal, headers: { Accept: 'application/json' } });
+export const apiRequest = async <T>(path: string, options: RequestOptions = {}): Promise<T> => {
+  const { method = 'GET', query, signal } = options;
+  const search = toQueryString(query);
+  const url = `${API_PREFIX}${path}${search ? `?${search}` : ''}`;
+
+  const response = await fetch(url, { method, signal, headers: { Accept: 'application/json' } });
 
   if (!response.ok) {
-    throw new HttpError(response.status, response.statusText, url);
+    throw new HttpError(response.status, await readErrorMessage(response));
   }
 
+  if (response.status === 204) return undefined as T;
   return (await response.json()) as T;
-}
+};

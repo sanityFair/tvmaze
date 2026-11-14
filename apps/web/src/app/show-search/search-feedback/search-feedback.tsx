@@ -1,10 +1,10 @@
 import { WarningCircleIcon } from '@phosphor-icons/react';
 
+import { FeedbackMessage } from '~/components/feedback-message/feedback-message';
 import { Alert, AlertDescription, AlertTitle } from '~/ui-kit/alert';
 import { Spinner } from '~/ui-kit/spinner';
 
 import { useSearchStatus } from '../logic/use-search-status';
-import { FeedbackMessage } from './feedback-message/feedback-message';
 import nothingFoundIllustration from './nothing-found.svg';
 import searchShowsIllustration from './search-shows.svg';
 

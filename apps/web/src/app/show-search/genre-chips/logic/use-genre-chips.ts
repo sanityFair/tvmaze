@@ -1,17 +1,16 @@
-import { useShowSearchStore } from '../../logic/show-search.store';
-import { useFilteredResults } from '../../logic/use-filtered-results';
+import { selectGenre } from '../../logic/tasks/select-genre';
+import { useResultsPage } from '../../logic/use-results-page';
 import { useSearchStatus } from '../../logic/use-search-status';
 
 export const ALL_GENRES = '__all__';
 
 export const useGenreChips = () => {
   const { status } = useSearchStatus();
-  const { genres, selectedGenre } = useFilteredResults();
-  const selectGenre = useShowSearchStore((state) => state.selectGenre);
+  const { genres, selectedGenre } = useResultsPage();
 
   const handleValueChange = (values: string[]) => {
     const [next] = values;
-    selectGenre(next && next !== ALL_GENRES ? next : null);
+    void selectGenre(next && next !== ALL_GENRES ? next : null);
   };
 
   return {

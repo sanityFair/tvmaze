@@ -1,10 +1,10 @@
 import { useShowSearchStore } from '../../logic/show-search.store';
-import { useFilteredResults } from '../../logic/use-filtered-results';
+import { useResultsPage } from '../../logic/use-results-page';
 import { useSearchStatus } from '../../logic/use-search-status';
 
 export const useShowList = () => {
   const { status } = useSearchStatus();
-  const { visibleShows, summary } = useFilteredResults();
+  const { visibleShows, summary } = useResultsPage();
   const isUpdating = useShowSearchStore((state) => state.isLoading);
 
   return {
