@@ -5,7 +5,6 @@ type CacheEntry = {
   expiresAt: number;
 };
 
-/** In-memory cache of TVMaze responses keyed by request path + query. */
 const cache: Record<string, CacheEntry> = {};
 
 export const readCache = <T>(key: string): T | undefined => {

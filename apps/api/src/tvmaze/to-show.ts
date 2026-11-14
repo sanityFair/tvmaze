@@ -1,8 +1,8 @@
 import type { Show } from '@tvmaze/contracts';
 
+import { htmlToText } from './html-to-text.js';
 import type { TvMazeShow } from './tvmaze.types.js';
 
-/** Keeps only the fields the app exposes, so clients don't depend on the TVMaze payload. */
 export const toShow = (show: TvMazeShow): Show => ({
   id: show.id,
   url: show.url,
@@ -15,5 +15,5 @@ export const toShow = (show: TvMazeShow): Show => ({
   ended: show.ended,
   rating: { average: show.rating.average },
   image: show.image ? { medium: show.image.medium, original: show.image.original } : null,
-  summary: show.summary,
+  summary: htmlToText(show.summary),
 });

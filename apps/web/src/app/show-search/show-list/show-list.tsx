@@ -1,4 +1,4 @@
-import { ShowCard } from '~/components/show-card/show-card';
+import { ShowCard } from '~/app/components/show-card/show-card';
 
 import { useShowList } from './logic/use-show-list';
 

@@ -1,16 +1,22 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
-import { useFavoritesStore } from '~/stores/favorites.store';
-import { loadFavorites } from '~/tasks/load-favorites';
+import { useFavoritesStore } from '~/app/logic/favorites.store';
+import { loadFavorites } from '~/app/logic/tasks/load-favorites';
+
+const pluralRules = new Intl.PluralRules('en-US');
 
 export const useApp = () => {
+  const [isFavoritesOpen, setFavoritesOpen] = useState(false);
   const favoritesCount = useFavoritesStore((state) => state.shows.length);
 
   useEffect(() => {
-    void loadFavorites();
+    loadFavorites();
   }, []);
 
   return {
-    favoritesLabel: favoritesCount > 0 ? `Favorites (${favoritesCount})` : 'Favorites',
+    isFavoritesOpen,
+    onFavoritesOpenChange: setFavoritesOpen,
+    favoritesCount,
+    favoritesLabel: `Favorites, ${favoritesCount} ${pluralRules.select(favoritesCount) === 'one' ? 'show' : 'shows'}`,
   };
 };

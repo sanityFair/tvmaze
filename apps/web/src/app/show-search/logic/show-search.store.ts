@@ -3,23 +3,26 @@ import { create } from 'zustand';
 
 type ShowSearchState = {
   query: string;
-  loadedQuery: string | null;
+  genre: string | null;
+  page: number;
   response: ShowsPage | null;
   isLoading: boolean;
   error: Error | null;
 };
 
 type ShowSearchActions = {
-  startSearch: (query: string) => void;
-  receiveResults: (query: string, response: ShowsPage) => void;
-  failSearch: (error: Error) => void;
-  restoreLoaded: () => void;
-  resetSearch: () => void;
+  setQuery: (query: string) => void;
+  selectGenre: (genre: string | null) => void;
+  goToPage: (page: number) => void;
+  startLoading: () => void;
+  receiveResults: (response: ShowsPage) => void;
+  failLoading: (error: Error) => void;
 };
 
 const INITIAL_STATE: ShowSearchState = {
   query: '',
-  loadedQuery: null,
+  genre: null,
+  page: 1,
   response: null,
   isLoading: false,
   error: null,
@@ -27,11 +30,14 @@ const INITIAL_STATE: ShowSearchState = {
 
 export const useShowSearchStore = create<ShowSearchState & ShowSearchActions>()((set) => ({
   ...INITIAL_STATE,
-  startSearch: (query) => set({ query, isLoading: true, error: null }),
-  receiveResults: (query, response) =>
-    set({ loadedQuery: query, response, isLoading: false, error: null }),
-  failSearch: (error) => set({ isLoading: false, error }),
-  restoreLoaded: () =>
-    set((state) => ({ query: state.loadedQuery ?? '', isLoading: false, error: null })),
-  resetSearch: () => set(INITIAL_STATE),
+  setQuery: (query) =>
+    set((state) => {
+      if (query === state.query) return state;
+      return query === '' ? INITIAL_STATE : { query, genre: null, page: 1 };
+    }),
+  selectGenre: (genre) => set({ genre, page: 1 }),
+  goToPage: (page) => set({ page }),
+  startLoading: () => set({ isLoading: true, error: null }),
+  receiveResults: (response) => set({ response, isLoading: false, error: null }),
+  failLoading: (error) => set({ isLoading: false, error }),
 }));

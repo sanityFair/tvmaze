@@ -1,6 +1,6 @@
 import { WarningCircleIcon } from '@phosphor-icons/react';
 
-import { FeedbackMessage } from '~/components/feedback-message/feedback-message';
+import { FeedbackMessage } from '~/app/components/feedback-message/feedback-message';
 import { Alert, AlertDescription, AlertTitle } from '~/ui-kit/alert';
 import { Spinner } from '~/ui-kit/spinner';
 

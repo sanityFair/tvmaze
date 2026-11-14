@@ -1,11 +1,13 @@
 import { HeartIcon, WarningCircleIcon } from '@phosphor-icons/react';
 
-import { FeedbackMessage } from '~/components/feedback-message/feedback-message';
-import { ShowCard } from '~/components/show-card/show-card';
+import { FeedbackMessage } from '~/app/components/feedback-message/feedback-message';
+import { ShowCard } from '~/app/components/show-card/show-card';
 import { Button } from '~/ui-kit/button';
 import { Spinner } from '~/ui-kit/spinner';
 
+import { DecadeFilter } from './decade-filter/decade-filter';
 import { useFavoriteShows } from './logic/use-favorite-shows';
+import { VhsShelf } from './vhs-shelf/vhs-shelf';
 
 const MEDIA_CLASS = 'flex size-14 items-center justify-center rounded-full border';
 
@@ -13,7 +15,21 @@ export const FavoriteShows = () => {
   const favorites = useFavoriteShows();
 
   return (
-    <div className="flex flex-col gap-4 px-4 pt-6 pb-16 sm:px-8">
+    <section
+      aria-labelledby="favorite-shows-title"
+      className="flex animate-fade flex-col gap-4 px-4 pt-6 pb-16 sm:px-8"
+    >
+      <div className="flex items-baseline justify-between gap-4">
+        <h2 id="favorite-shows-title" className="font-heading text-xl font-bold tracking-tight">
+          Favorites
+        </h2>
+        {favorites.status === 'list' && (
+          <p className="text-xs tracking-wider text-muted-foreground uppercase">
+            {favorites.countLabel}
+          </p>
+        )}
+      </div>
+
       {favorites.status === 'loading' && (
         <div className="flex animate-fade flex-col items-center gap-3 py-24 text-sm text-muted-foreground">
           <Spinner aria-label="Loading favorites" className="size-6" />
@@ -51,14 +67,24 @@ export const FavoriteShows = () => {
       )}
 
       {favorites.status === 'list' && (
-        <ul aria-label="Favorite shows" className="flex flex-col gap-4">
-          {favorites.shows.map((show) => (
-            <li key={show.id} className="animate-rise">
-              <ShowCard show={show} />
-            </li>
-          ))}
-        </ul>
+        <div className="flex flex-col gap-6">
+          <DecadeFilter
+            decades={favorites.decades}
+            value={favorites.selectedDecade}
+            onValueChange={favorites.onDecadeChange}
+          />
+          <VhsShelf
+            shows={favorites.shows}
+            selectedShowId={favorites.selectedShow?.id ?? null}
+            onSelectShow={favorites.onSelectShow}
+          />
+          {favorites.selectedShow && (
+            <div key={favorites.selectedShow.id} className="animate-rise">
+              <ShowCard show={favorites.selectedShow} />
+            </div>
+          )}
+        </div>
       )}
-    </div>
+    </section>
   );
 };

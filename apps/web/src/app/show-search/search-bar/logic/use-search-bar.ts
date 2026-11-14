@@ -2,7 +2,6 @@ import debounce from 'debounce';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 
 import { useShowSearchStore } from '../../logic/show-search.store';
-import { searchShows } from '../../logic/tasks/search-shows';
 
 const SEARCH_DEBOUNCE_MS = 400;
 
@@ -10,9 +9,8 @@ export const useSearchBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState('');
   const isLoading = useShowSearchStore((state) => state.isLoading);
-  const [commitQuery] = useState(() =>
-    debounce((query: string) => void searchShows(query), SEARCH_DEBOUNCE_MS),
-  );
+  const setQuery = useShowSearchStore((state) => state.setQuery);
+  const [commitQuery] = useState(() => debounce(setQuery, SEARCH_DEBOUNCE_MS));
 
   useEffect(() => () => commitQuery.clear(), [commitQuery]);
 
@@ -24,7 +22,7 @@ export const useSearchBar = () => {
   const handleClear = () => {
     commitQuery.clear();
     setValue('');
-    void searchShows('');
+    setQuery('');
     inputRef.current?.focus();
   };
 

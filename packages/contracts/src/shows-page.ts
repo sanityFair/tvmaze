@@ -12,11 +12,8 @@ export type ShowsPage = {
   page: number;
   pageSize: number;
   totalPages: number;
-  /** Number of shows matching the genre filter. */
   total: number;
-  /** Number of shows found by the query before genre filtering. */
   totalUnfiltered: number;
-  /** All genres of the found shows, sorted alphabetically. */
   genres: string[];
   genre: string | null;
 };

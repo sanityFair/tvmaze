@@ -1,5 +1,5 @@
 import { fetchFavorites } from '~/api/favorites';
-import { useFavoritesStore } from '~/stores/favorites.store';
+import { useFavoritesStore } from '~/app/logic/favorites.store';
 
 export const loadFavorites = async (): Promise<void> => {
   const store = useFavoritesStore.getState();

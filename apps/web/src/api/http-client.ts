@@ -34,12 +34,8 @@ export const toQueryString = (params: QueryParams = {}): string => {
 };
 
 const readErrorMessage = async (response: Response): Promise<string> => {
-  try {
-    const body = (await response.json()) as Partial<ApiErrorBody>;
-    if (typeof body.message === 'string') return body.message;
-  } catch {
-    // Non-JSON error body: fall back to the status text.
-  }
+  const body = (await response.json().catch(() => null)) as Partial<ApiErrorBody> | null;
+  if (typeof body?.message === 'string') return body.message;
   return `Request failed with ${response.status} ${response.statusText}`.trim();
 };
 

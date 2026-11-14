@@ -8,14 +8,12 @@ type FavoriteEntry = {
   addedAt: number;
 };
 
-/** In-memory favorites keyed by show id. Lost on server restart. */
 const favorite: Record<number, FavoriteEntry> = {};
 
 @Injectable()
 export class FavoritesService {
   constructor(private readonly tvmaze: TvMazeClient) {}
 
-  /** Most recently added first. */
   list(): Show[] {
     return Object.values(favorite)
       .sort((a, b) => b.addedAt - a.addedAt)

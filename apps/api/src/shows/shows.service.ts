@@ -10,7 +10,6 @@ import { slicePage } from './logic/slice-page.js';
 export class ShowsService {
   constructor(private readonly tvmaze: TvMazeClient) {}
 
-  /** Searches shows, filters them by genre and returns the requested page. */
   async findPage({ q, genre, page, pageSize }: ShowsQuery): Promise<ShowsPage> {
     const shows = await this.tvmaze.searchShows(q);
     const filtered = genre ? shows.filter((show) => show.genres.includes(genre)) : shows;
