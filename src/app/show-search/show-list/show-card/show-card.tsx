@@ -3,7 +3,7 @@ import { StarIcon, TelevisionSimpleIcon } from '@phosphor-icons/react';
 import type { TvMazeShow } from '~/api/tvmaze';
 import { Badge } from '~/ui-kit/badge';
 
-import { useShowCard } from './use-show-card';
+import { useShowCard } from './logic/use-show-card';
 
 type ShowCardProps = {
   show: TvMazeShow;

@@ -1,9 +1,9 @@
 import { GenreChips } from './genre-chips/genre-chips';
+import { useShowSearch } from './logic/use-show-search';
 import { ResultsPagination } from './results-pagination/results-pagination';
 import { SearchBar } from './search-bar/search-bar';
 import { SearchFeedback } from './search-feedback/search-feedback';
 import { ShowList } from './show-list/show-list';
-import { useShowSearch } from './use-show-search';
 
 export const ShowSearch = () => {
   const search = useShowSearch();

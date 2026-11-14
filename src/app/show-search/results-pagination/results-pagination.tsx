@@ -8,7 +8,7 @@ import {
   PaginationPrevious,
 } from '~/ui-kit/pagination';
 
-import { useResultsPagination } from './use-results-pagination';
+import { useResultsPagination } from './logic/use-results-pagination';
 
 type ResultsPaginationProps = {
   page: number;

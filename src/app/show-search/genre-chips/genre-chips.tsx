@@ -1,6 +1,6 @@
 import { ToggleGroup, ToggleGroupItem } from '~/ui-kit/toggle-group';
 
-import { ALL_GENRES, useGenreChips } from './use-genre-chips';
+import { ALL_GENRES, useGenreChips } from './logic/use-genre-chips';
 
 type GenreChipsProps = {
   genres: string[];

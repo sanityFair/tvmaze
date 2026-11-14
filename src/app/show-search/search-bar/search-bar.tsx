@@ -4,7 +4,7 @@ import { Button } from '~/ui-kit/button';
 import { Input } from '~/ui-kit/input';
 import { Spinner } from '~/ui-kit/spinner';
 
-import { useSearchBar } from './use-search-bar';
+import { useSearchBar } from './logic/use-search-bar';
 
 type SearchBarProps = {
   value: string;
