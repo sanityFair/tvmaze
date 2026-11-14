@@ -1,68 +1,177 @@
-# Architecture Rules
+# Архитектурные правила
 
-## 1. View and Presenter Separation
+## 1. Архитектурные принципы
 
-Application components follow the View/Presenter pattern when presentation logic is required.
+Приложение строится на принципах Simple Architecture с разделением ответственности между View, Presenter, Tasks и состоянием приложения.
+
+- **View** — отображение интерфейса.
+- **Presenter** — логика представления и взаимодействия с пользователем.
+- **Tasks (Use Cases)** — выполнение пользовательских сценариев и бизнес-логики.
+- **Entity / State** — хранение и изменение состояния приложения.
+- **Router** — навигация, управляемая на уровне Presenter.
+
+Основные правила:
+
+- Каждый модуль должен иметь чётко определённую ответственность.
+- Бизнес-логика должна быть отделена от React-компонентов.
+- Зависимости от конкретных библиотек следует сводить к минимуму.
+- Не следует создавать архитектурные слои без реальной необходимости.
+- Простота, читаемость и поддерживаемость имеют приоритет над количеством абстракций.
+
+## 2. Разделение View и Presenter
+
+Компоненты приложения используют паттерн View/Presenter, когда требуется логика представления.
 
 ### View
 
-- MUST be responsible for rendering JSX.
-- MUST NOT contain business logic, state management, effects, data fetching, validation, or data transformations.
-- MUST delegate behavior and data preparation to dedicated hooks when needed.
-- MAY use `.map()`, conditional rendering, and early returns based on prepared values.
-- MAY import child components, UI primitives, and styles.
-- MUST use prepared data and event handlers rather than implement application logic inline.
-- Purely presentational components do not require a Presenter hook.
+- Отвечает за рендеринг JSX.
+- Не содержит бизнес-логику, управление состоянием, эффекты, запросы к API, валидацию или преобразование данных.
+- При необходимости делегирует поведение и подготовку данных соответствующим хукам.
+- Может использовать `.map()`, условный рендеринг и ранние возвраты на основе подготовленных данных.
+- Может импортировать дочерние компоненты, UI-примитивы и стили.
+- Использует подготовленные данные и обработчики вместо реализации прикладной логики внутри JSX.
+- Чисто презентационным компонентам собственный Presenter не требуется.
 
 ### Presenter
 
-- MUST be implemented as a React hook.
-- MUST have a descriptive name reflecting its responsibility.
-- MUST encapsulate the presentation logic required by its View.
-- MUST prepare data, derived values, and event handlers for rendering.
-- MAY delegate responsibilities to smaller, specialized hooks and pure functions.
-- SHOULD expose a minimal, explicit interface to the View.
+- Реализуется в виде React-хука.
+- Имеет понятное название, отражающее его ответственность.
+- Управляет логикой представления, необходимой View.
+- Подготавливает данные, вычисляемые значения и обработчики событий.
+- Вызывает соответствующие Tasks для выполнения пользовательских сценариев, если они выделены.
+- При необходимости управляет локальными состояниями интерфейса: `loading`, `error`, состоянием элементов управления.
+- Как правило, отвечает за навигацию после выполнения пользовательских сценариев.
+- Может делегировать ответственность специализированным хукам и чистым функциям.
+- Предоставляет View минимальный и явно определённый интерфейс.
+- Сложную бизнес-логику следует выносить в Tasks, а не оставлять в Presenter.
 
-Presentation logic belongs outside the View, while rendering decisions remain in the View.
+Логика представления располагается вне View, а решения о рендеринге остаются во View.
 
-## 2. File Size
+## 3. Tasks и бизнес-логика
 
-- Application source files MUST NOT exceed 120 lines of code.
-- Split large files into smaller modules with clear responsibilities.
-- Prefer meaningful abstractions over code compression.
-- Extract independent logic into dedicated hooks or functions.
-- Do not create abstractions solely to satisfy the line limit.
-- Generated UI-kit components and third-party code are exempt from this constraint.
+Tasks представляют пользовательские сценарии (Use Cases) и инкапсулируют действия, выполняемые системой.
 
-Readability and maintainability take priority over minimizing the number of files.
+Примеры: `searchShows`, `createOrder`, `logout`, `publishPost`.
 
-## 3. UI Tree Structure
+### Правила Tasks
 
-The directory structure MUST reflect the UI component hierarchy.
+- Task представляет собой обычную функцию JavaScript/TypeScript.
+- Название Task выражает действие и обычно начинается с глагола.
+- Каждая Task реализует конкретный пользовательский сценарий или самостоятельную бизнес-операцию.
+- Tasks не зависят от React, React Hooks или жизненного цикла компонентов.
+- Tasks не содержат JSX и не управляют локальным состоянием интерфейса.
+- Tasks не выполняют навигацию по интерфейсу.
+- Функция по возможности принимает необходимые входные параметры и возвращает результат выполнения.
+- Tasks могут быть асинхронными.
+- Tasks могут вызывать другие Tasks и вспомогательные функции.
+- Tasks могут взаимодействовать с API-клиентами и менеджером состояния без React-посредников.
+- Технические детали, несущественные для пользовательского сценария, желательно скрывать внутри соответствующих модулей.
 
-- Every application component MUST have its own directory.
-- Organize component directories according to the UI hierarchy and component ownership.
-- Keep components used by a single parent directly inside that parent's directory.
-- Colocate component-specific hooks, utilities, styles, and assets.
-- Use `components/` only for reusable components (see section 5).
-- Avoid unnecessary directory nesting that does not represent component ownership.
+### Когда создавать Task
 
-Example:
+Отдельную Task целесообразно выделять, когда:
+
+- Реализуется самостоятельный пользовательский сценарий.
+- Необходимо выполнить последовательность зависимых операций.
+- Есть бизнес-правила, проверки или преобразования.
+- Логика используется несколькими Presenter.
+- Логику необходимо тестировать независимо от React.
+
+Не следует создавать Task исключительно ради обёртки над одним простым вызовом API или переноса нескольких строк из Presenter.
+
+Простая логика без самостоятельной бизнес-ответственности может оставаться в специализированном хуке или чистой функции.
+
+## 4. Управление состоянием (Zustand)
+
+Zustand используется как основной менеджер разделяемого состояния приложения. Это не означает, что всё состояние должно храниться в Zustand.
+
+### Локальное состояние интерфейса
+
+- Хранится максимально близко к компоненту, которому принадлежит.
+- Обычно управляется Presenter или специализированным хуком через `useState` или `useReducer`.
+- Не переносится в Zustand без необходимости совместного использования.
+- Может включать `loading`, `error`, значения полей, выбранные фильтры и состояние пагинации.
+
+### Разделяемое состояние
+
+- Zustand используется для состояния, необходимого нескольким компонентам или независимым частям приложения.
+- Хранилище отвечает за данные и операции их изменения.
+- Хранилище не зависит от прикладных View и Presenter.
+- Бизнес-сценарии следует размещать в Tasks, а не внутри действий хранилища.
+- Presenter подписывается только на необходимые части состояния через селекторы Zustand.
+- Tasks могут обращаться к хранилищу напрямую через `getState()` и вызывать его действия без React-хуков.
+- Предпочтительны именованные действия хранилища, а не прямые вызовы `setState()` из разных частей приложения.
+- Не следует дублировать одно и то же состояние в нескольких хранилищах без необходимости.
+
+### Расположение хранилища
+
+- Хранилище располагается максимально близко к области его использования.
+- Хранилище, используемое внутри одного поддерева интерфейса, обычно располагается в `logic/` ближайшего общего владельца.
+- Хранилище, используемое независимыми частями приложения, располагается в `src/stores/`.
+- Имена файлов хранилищ заканчиваются на `.store.ts`.
+- Не следует выносить хранилище в глобальную директорию только ради предполагаемого переиспользования.
+- Важно учитывать, что `create()` на уровне модуля создаёт общий экземпляр хранилища независимо от расположения файла.
+- Если каждому поддереву нужен изолированный экземпляр, стоит рассмотреть `createStore()` и передачу экземпляра через React Context.
+
+### Абстракция над Zustand
+
+- Не следует создавать универсальную обёртку, интерфейс или адаптер над Zustand исключительно ради гипотетической замены библиотеки.
+- Presenter может использовать селекторы Zustand напрямую. Скрывать каждый вызов `useStore` за дополнительным хуком не требуется.
+- Tasks могут обращаться к действиям хранилища через `getState()`, если это не мешает тестированию или переиспользованию.
+- Публичные операции хранилища следует называть в терминах предметной области (`setQuery`, `clearSession`), не распространяя детали `setState()` по приложению.
+- Специализированные селекторы и хуки оправданы, когда они устраняют реальное дублирование или скрывают нетривиальную логику выборки.
+- Интерфейс, адаптер или передачу зависимостей стоит вводить при конкретной потребности: поддержке нескольких реализаций, реальной миграции, использовании Tasks в другой среде или существенных сложностях изолированного тестирования.
+- Если абстракция введена, она должна скрывать конкретный API Zustand и предоставлять минимальный контракт, необходимый вызывающему коду.
+- Универсальная обёртка не гарантирует замену менеджера состояния без изменений: могут различаться подписки, реактивность, жизненный цикл и модель обновлений.
+
+**Принцип:** не проектировать замену Zustand заранее. Сначала отделить бизнес-сценарии в Tasks, использовать понятные действия и селекторы; вводить абстракцию при подтверждённой необходимости.
+
+## 5. Размер файлов
+
+- Файлы прикладного исходного кода не должны превышать 120 строк.
+- Большие файлы следует разделять на модули с понятной ответственностью.
+- Следует предпочитать осмысленные абстракции сжатию кода.
+- Независимую логику стоит выносить в отдельные хуки, Tasks или функции.
+- Не следует создавать абстракции исключительно ради соблюдения лимита.
+- Сгенерированные компоненты UI-кита и сторонний код освобождаются от этого ограничения.
+
+Читаемость и поддерживаемость важнее минимального количества файлов.
+
+## 6. Древовидная структура компонентов
+
+Структура директорий отражает иерархию компонентов интерфейса.
+
+- Каждый прикладной компонент располагается в собственной директории.
+- Директории организуются в соответствии с иерархией интерфейса и принадлежностью компонентов.
+- Компоненты, используемые одним родителем, располагаются непосредственно внутри директории этого родителя.
+- Специфичные для компонента хуки, Tasks, хранилища, утилиты, стили и ресурсы размещаются рядом с ним.
+- Директорию `logic/` рекомендуется использовать для группировки логики компонента при наличии Presenter и Tasks.
+- `logic/` может содержать Presenter-хуки, вспомогательные хуки и функции.
+- `logic/tasks/` содержит Tasks, принадлежащие конкретному компоненту, если такие Tasks выделены.
+- Директория `components/` используется только для переиспользуемых компонентов (раздел 8).
+- Следует избегать лишней вложенности директорий без реальной необходимости.
+
+Пример:
 
 ```text
 app/
 ├── app.tsx
 └── show-search/
     ├── show-search.tsx
-    ├── use-show-search.ts
-    ├── use-results-filter.ts
-    ├── collect-genres.ts
+    ├── logic/
+    │   ├── use-show-search.ts
+    │   ├── use-results-filter.ts
+    │   ├── collect-genres.ts
+    │   └── tasks/
+    │       └── search-shows.ts
     ├── search-bar/
     │   ├── search-bar.tsx
-    │   └── use-search-bar.ts
+    │   └── logic/
+    │       └── use-search-bar.ts
     ├── genre-chips/
     │   ├── genre-chips.tsx
-    │   └── use-genre-chips.ts
+    │   └── logic/
+    │       └── use-genre-chips.ts
     ├── show-list/
     │   ├── show-list.tsx
     │   └── show-card/
@@ -71,77 +180,89 @@ app/
         └── results-pagination.tsx
 ```
 
-## 4. Naming Conventions
+Папка `logic/` не обязательна для компонентов без собственной логики.
 
-Names MUST describe responsibilities rather than architectural implementation details.
+## 7. Именование
 
-- View filenames MUST match their component directory names.
-- Hooks MUST use descriptive names beginning with `use`.
-- Helper functions MUST describe their behavior.
-- Follow existing project naming conventions consistently.
+Названия должны описывать ответственность, а не технические детали реализации.
 
-Example:
+- Имена файлов View совпадают с именами директорий соответствующих компонентов.
+- Названия React-хуков начинаются с `use`.
+- Названия Tasks выражают действие и начинаются с глагола.
+- Названия вспомогательных функций описывают их поведение.
+- Имена по возможности отражают предметную область приложения.
+- Во всём проекте соблюдается единый стиль именования.
 
-```text
-search/
-├── search.tsx
-├── use-search.ts
-├── use-suggestions.ts
-└── validate-query.ts
-```
-
-## 5. Component Reuse and Ownership
-
-The `components/` directory is reserved for reusable application components and defines the intended scope of their reuse.
-
-- Components used by a single parent belong directly in that parent's directory.
-- Components shared within a UI subtree SHOULD be placed in the `components/` directory of their nearest common ancestor.
-- Components shared across unrelated UI subtrees MAY be placed in a global `src/components/` directory.
-- Place components at the lowest level of the tree that satisfies their reuse requirements.
-- Do not create shared abstractions or broaden component scope without a concrete reuse requirement.
-- Reusable application components follow the same View/Presenter principles.
-
-Example (`show-poster` is shared by `show-card` and `show-details`):
+Пример:
 
 ```text
 show-search/
 ├── show-search.tsx
-├── components/
-│   └── show-poster/
-│       └── show-poster.tsx
-├── show-list/
-│   └── show-card/
-│       └── show-card.tsx
-└── show-details/
-    └── show-details.tsx
+└── logic/
+    ├── use-show-search.ts
+    ├── use-suggestions.ts
+    ├── validate-query.ts
+    └── tasks/
+        └── search-shows.ts
 ```
 
-## 6. UI Kit
+Не следует использовать общие названия вроде `helper`, `utils` или `manager`, если они не раскрывают ответственность модуля.
 
-`src/ui-kit/` contains reusable UI primitives based on shadcn/ui.
+## 8. Переиспользование и владение
 
-- MUST NOT contain application-specific business logic.
-- MAY be imported by application Views.
-- Generated UI primitives are exempt from application-specific View/Presenter conventions.
-- Preserve upstream component implementations unless customization is required.
-- Avoid unnecessary wrappers around UI-kit components.
+Компоненты и Tasks размещаются максимально близко к месту использования.
 
-## 7. Architectural Decisions
+### Компоненты
 
-Before introducing a new component or module:
+- Компоненты, используемые одним родителем, располагаются в директории этого родителя.
+- Компоненты, используемые несколькими элементами одного поддерева интерфейса, размещаются в `components/` ближайшего общего предка.
+- Компоненты, используемые независимыми поддеревьями интерфейса, могут размещаться в глобальной `src/components/`.
+- Следует выбирать минимально необходимую область переиспользования.
+- Не следует выносить компоненты в общий слой без конкретной необходимости.
+- Переиспользуемые компоненты соблюдают те же правила View/Presenter.
 
-1. Define its responsibility.
-2. Determine its position in the UI tree.
-3. Identify its owner and potential consumers.
-4. Separate rendering from behavior and data preparation.
-5. Choose descriptive names.
-6. Keep modules focused and maintainable.
+### Tasks
 
-When modifying existing functionality:
+- Tasks, принадлежащие одному компоненту, обычно располагаются в его `logic/tasks/`.
+- Tasks, используемые несколькими независимыми компонентами, могут размещаться в общей `src/tasks/`.
+- Не следует переносить Tasks в глобальную директорию исключительно ради потенциального переиспользования.
+- Для Task можно создать отдельную директорию, если её реализация требует нескольких файлов.
+- При перемещении Task необходимо сохранять её независимость от React.
 
-- Preserve established architectural boundaries.
-- Prefer localized changes.
-- Avoid unrelated structural refactoring.
-- Do not introduce architectural layers without a concrete need.
-- If a requirement conflicts with an existing rule, discuss the rule before bypassing it.
-- Prefer simple solutions over unnecessary abstractions.
+Общие Tasks должны отражать реальные сценарии приложения, а не просто объединять технически похожие операции.
+
+## 9. UI-кит
+
+`src/ui-kit/` содержит переиспользуемые UI-примитивы на основе shadcn/ui.
+
+- UI-кит не содержит прикладную бизнес-логику.
+- Компоненты View могут импортировать его примитивы.
+- Сгенерированные UI-примитивы освобождаются от требований View/Presenter.
+- Исходные реализации рекомендуется сохранять без изменений, если кастомизация не требуется.
+- Следует избегать ненужных обёрток над компонентами UI-кита.
+- UI-кит не зависит от прикладных Tasks или Presenter.
+
+## 10. Архитектурные решения
+
+Перед созданием компонента, хука или модуля необходимо:
+
+1. Определить его ответственность.
+2. Выяснить, относится логика к отображению, представлению или пользовательскому сценарию.
+3. Определить владельца и потенциальных потребителей.
+4. Выбрать правильное расположение в дереве директорий.
+5. Отделить рендеринг от поведения и бизнес-логики.
+6. Определить, действительно ли требуется отдельная Task.
+7. Выбрать понятное название.
+8. Убедиться, что решение не создаёт ненужных зависимостей.
+
+При изменении существующей функциональности:
+
+- Необходимо сохранять установленные архитектурные границы.
+- Следует предпочитать локальные изменения.
+- Следует избегать несвязанных структурных рефакторингов.
+- Не нужно добавлять архитектурные слои без конкретной необходимости.
+- Если требование конфликтует с существующим правилом, сначала следует обсудить изменение правила.
+- Следует предпочитать простые решения избыточным абстракциям.
+- Не следует усложнять архитектуру ради гипотетических требований.
+
+**Главный принцип:** архитектура должна помогать разделять ответственность и управлять сложностью, а не создавать дополнительный код ради соблюдения формальных правил.

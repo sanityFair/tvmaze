@@ -1,17 +1,22 @@
+import { useShowSearchStore } from '../../logic/show-search.store';
+import { useFilteredResults } from '../../logic/use-filtered-results';
+import { useSearchStatus } from '../../logic/use-search-status';
+
 export const ALL_GENRES = '__all__';
 
-type UseGenreChipsOptions = {
-  selectedGenre: string | null;
-  onGenreChange: (genre: string | null) => void;
-};
+export const useGenreChips = () => {
+  const { status } = useSearchStatus();
+  const { genres, selectedGenre } = useFilteredResults();
+  const selectGenre = useShowSearchStore((state) => state.selectGenre);
 
-export const useGenreChips = ({ selectedGenre, onGenreChange }: UseGenreChipsOptions) => {
   const handleValueChange = (values: string[]) => {
     const [next] = values;
-    onGenreChange(next && next !== ALL_GENRES ? next : null);
+    selectGenre(next && next !== ALL_GENRES ? next : null);
   };
 
   return {
+    isVisible: status === 'results' && genres.length > 0,
+    genres,
     value: [selectedGenre ?? ALL_GENRES],
     onValueChange: handleValueChange,
   };

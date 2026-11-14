@@ -10,14 +10,8 @@ import {
 
 import { useResultsPagination } from './logic/use-results-pagination';
 
-type ResultsPaginationProps = {
-  page: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
-};
-
-export const ResultsPagination = (props: ResultsPaginationProps) => {
-  const pagination = useResultsPagination(props);
+export const ResultsPagination = () => {
+  const pagination = useResultsPagination();
 
   if (!pagination.isVisible) return null;
 

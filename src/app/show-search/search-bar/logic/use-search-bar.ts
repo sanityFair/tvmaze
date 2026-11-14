@@ -1,25 +1,37 @@
-import { type ChangeEvent, useRef } from 'react';
+import debounce from 'debounce';
+import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 
-type UseSearchBarOptions = {
-  value: string;
-  onValueChange: (value: string) => void;
-  onClear: () => void;
-};
+import { useShowSearchStore } from '../../logic/show-search.store';
+import { searchShows } from '../../logic/tasks/search-shows';
 
-export const useSearchBar = ({ value, onValueChange, onClear }: UseSearchBarOptions) => {
+const SEARCH_DEBOUNCE_MS = 400;
+
+export const useSearchBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [value, setValue] = useState('');
+  const isLoading = useShowSearchStore((state) => state.isLoading);
+  const [commitQuery] = useState(() =>
+    debounce((query: string) => void searchShows(query), SEARCH_DEBOUNCE_MS),
+  );
+
+  useEffect(() => () => commitQuery.clear(), [commitQuery]);
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    onValueChange(event.target.value);
+    setValue(event.target.value);
+    commitQuery(event.target.value.trim());
   };
 
   const handleClear = () => {
-    onClear();
+    commitQuery.clear();
+    setValue('');
+    void searchShows('');
     inputRef.current?.focus();
   };
 
   return {
     inputRef,
+    value,
+    isLoading,
     canClear: value !== '',
     onChange: handleChange,
     onClear: handleClear,
