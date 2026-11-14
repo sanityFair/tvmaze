@@ -2,12 +2,13 @@
   "name": "@tvmaze/api",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
-    "dev": "tsc -p tsconfig.build.json && concurrently -k -n tsc,api -c blue,green \"tsc -p tsconfig.build.json --watch --preserveWatchOutput\" \"node --watch --env-file-if-exists=.env dist/main.js\"",
-    "build": "tsc -p tsconfig.build.json",
-    "start": "node --env-file-if-exists=.env dist/main.js",
-    "typecheck": "tsc -p tsconfig.json --noEmit"
+    "dev": "tsc -p tsconfig.build.json && concurrently -k -n tsc,api -c blue,green \"tsc -p tsconfig.build.json --watch --preserveWatchOutput\" \"node --watch --env-file-if-exists=.env dist/bootstrap.js\"",
+    "build": "tsc -p tsconfig.build.json && pnpm bundle",
+    "start": "node --env-file-if-exists=.env dist/bootstrap.js",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "bundle": "esbuild dist/bootstrap.js --bundle --platform=node --target=node22 --format=cjs --outfile=dist/bundle.js --log-level=warning --external:@nestjs/microservices --external:@nestjs/websockets --external:class-transformer --external:class-validator"
   },
   "dependencies": {
     "@nestjs/common": "^12.5.0",
@@ -21,6 +22,7 @@
     "@tvmaze/contracts": "workspace:*",
     "@types/node": "^24.19.2",
     "concurrently": "^10.0.7",
+    "esbuild": "^0.28.2",
     "typescript": "~7.0.2"
   }
 }

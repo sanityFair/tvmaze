@@ -59,7 +59,7 @@ pnpm preview      # serve the built web app (proxies /api to the API)
 The root `vercel.json` deploys both apps as [Vercel Services](https://vercel.com/docs/services) in one project:
 
 - `web` — `apps/web`, built by Vite into `dist`.
-- `api` — `apps/api`, built by `tsc`; `dist/main.js` runs as a Vercel Function.
+- `api` — `apps/api`, built by `tsc` and bundled by esbuild into a self-contained `dist/bundle.js`; `main.js` loads it as a Vercel Function.
 - `/api/*` is routed to `api` (the path is passed unchanged), everything else to `web`.
 
 Import the repository into Vercel with the repository root as the project root. The API keeps its cache and favorites in memory, so they are not shared between function instances and reset on cold starts.
