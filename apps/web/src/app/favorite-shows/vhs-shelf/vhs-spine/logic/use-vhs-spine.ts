@@ -6,14 +6,14 @@ import { getSpineDesign } from './get-spine-design';
 const STAGGER_MS = 40;
 const MAX_STAGGER_MS = 600;
 
-export const useVhsSpine = (show: Show, index: number) => {
+export const useVhsSpine = (show: Show, index: number, isRemoved: boolean) => {
   const design = useMemo(() => getSpineDesign(show), [show]);
   const year = show.premiered?.slice(0, 4) ?? null;
   const rating = show.rating.average;
 
   return {
     title: show.name,
-    label: year ? `${show.name}, ${year}` : show.name,
+    label: [show.name, year, isRemoved && 'removed from favorites'].filter(Boolean).join(', '),
     studio: show.type,
     year,
     rating: rating === null ? null : rating.toFixed(1),

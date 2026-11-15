@@ -8,17 +8,23 @@ import {
 } from '~/app/stores/favorites.store';
 
 import { collectDecades, getDecade } from './get-decade';
+import { useRetainedShows } from './use-retained-shows';
 
 export type FavoriteShowsStatus = 'loading' | 'error' | 'empty' | 'list';
 
 const pluralRules = new Intl.PluralRules('en-US');
 
 export const useFavoriteShows = () => {
-  const shows = useFavoritesStore(selectFavoriteShows);
+  const favoriteShows = useFavoritesStore(selectFavoriteShows);
   const loadStatus = useFavoritesStore(selectFavoritesStatus);
+  const shows = useRetainedShows(favoriteShows);
   const [requestedDecade, setDecade] = useState<string | null>(null);
   const [requestedShowId, setSelectedShowId] = useState<number | null>(null);
 
+  const removedShowIds = useMemo(() => {
+    const favoriteIds = new Set(favoriteShows.map(({ id }) => id));
+    return new Set(shows.filter(({ id }) => !favoriteIds.has(id)).map(({ id }) => id));
+  }, [shows, favoriteShows]);
   const decades = useMemo(() => collectDecades(shows), [shows]);
   const decade = requestedDecade && decades.includes(requestedDecade) ? requestedDecade : null;
   const visibleShows = useMemo(
@@ -34,13 +40,16 @@ export const useFavoriteShows = () => {
     return shows.length === 0 ? 'empty' : 'list';
   };
 
+  const count = favoriteShows.length;
+
   return {
     status: getStatus(),
-    countLabel: `${shows.length} ${pluralRules.select(shows.length) === 'one' ? 'tape' : 'tapes'}`,
+    countLabel: `${count} ${pluralRules.select(count) === 'one' ? 'tape' : 'tapes'}`,
     decades,
     selectedDecade: decade,
     onDecadeChange: setDecade,
     shows: visibleShows,
+    removedShowIds,
     selectedShow,
     onSelectShow: setSelectedShowId,
     onRetry: () => loadFavorites(),

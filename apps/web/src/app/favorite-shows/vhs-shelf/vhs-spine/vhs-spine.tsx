@@ -8,11 +8,12 @@ type VhsSpineProps = {
   show: Show;
   index: number;
   isSelected: boolean;
+  isRemoved: boolean;
   onSelect: () => void;
 };
 
-export const VhsSpine = ({ show, index, isSelected, onSelect }: VhsSpineProps) => {
-  const spine = useVhsSpine(show, index);
+export const VhsSpine = ({ show, index, isSelected, isRemoved, onSelect }: VhsSpineProps) => {
+  const spine = useVhsSpine(show, index, isRemoved);
 
   return (
     <button
@@ -21,7 +22,8 @@ export const VhsSpine = ({ show, index, isSelected, onSelect }: VhsSpineProps) =
       aria-pressed={isSelected}
       onClick={onSelect}
       style={spine.style}
-      className="relative flex h-72 w-12 shrink-0 animate-rise snap-start flex-col items-center gap-2 overflow-hidden rounded-[3px] py-2 shadow-[0_12px_20px_-10px_rgb(0_0_0/0.95)] outline-none vhs-spine transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1.5 focus-visible:ring-3 focus-visible:ring-ring aria-pressed:-translate-y-4 aria-pressed:shadow-[0_0_0_2px_rgb(255_255_255/0.85),0_24px_30px_-12px_rgb(0_0_0/0.95)] sm:h-80 sm:w-14"
+      data-removed={isRemoved || undefined}
+      className="relative flex h-72 w-12 shrink-0 animate-rise snap-start flex-col items-center gap-2 overflow-hidden rounded-[3px] py-2 shadow-[0_12px_20px_-10px_rgb(0_0_0/0.95)] outline-none vhs-spine transition-[translate,box-shadow] duration-300 ease-out hover:-translate-y-1.5 focus-visible:ring-3 focus-visible:ring-ring aria-pressed:-translate-y-4 aria-pressed:shadow-[0_0_0_2px_rgb(255_255_255/0.85),0_24px_30px_-12px_rgb(0_0_0/0.95)] sm:h-80 sm:w-14 data-removed:brightness-50 data-removed:grayscale"
     >
       <span
         aria-hidden

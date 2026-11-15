@@ -92,6 +92,7 @@ export const FavoriteShows = ({ onBack }: FavoriteShowsProps) => {
           <VhsShelf
             shows={favorites.shows}
             selectedShowId={favorites.selectedShow?.id ?? null}
+            removedShowIds={favorites.removedShowIds}
             onSelectShow={favorites.onSelectShow}
           />
           {favorites.selectedShow && (

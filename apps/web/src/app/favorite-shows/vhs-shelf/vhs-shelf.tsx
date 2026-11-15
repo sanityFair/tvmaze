@@ -9,10 +9,16 @@ import { VhsSpine } from './vhs-spine/vhs-spine';
 type VhsShelfProps = {
   shows: Show[];
   selectedShowId: number | null;
+  removedShowIds: ReadonlySet<number>;
   onSelectShow: (showId: number) => void;
 };
 
-export const VhsShelf = ({ shows, selectedShowId, onSelectShow }: VhsShelfProps) => {
+export const VhsShelf = ({
+  shows,
+  selectedShowId,
+  removedShowIds,
+  onSelectShow,
+}: VhsShelfProps) => {
   const { shelfRef, ...shelf } = useVhsShelf(shows.length);
 
   return (
@@ -30,6 +36,7 @@ export const VhsShelf = ({ shows, selectedShowId, onSelectShow }: VhsShelfProps)
                 show={show}
                 index={index}
                 isSelected={show.id === selectedShowId}
+                isRemoved={removedShowIds.has(show.id)}
                 onSelect={() => onSelectShow(show.id)}
               />
             </li>
