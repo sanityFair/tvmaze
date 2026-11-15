@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { useFavoritesStore } from '~/app/logic/favorites.store';
 import { loadFavorites } from '~/app/logic/tasks/load-favorites';
+import { useFavoritesStore } from '~/app/stores/favorites.store';
 
 const pluralRules = new Intl.PluralRules('en-US');
 

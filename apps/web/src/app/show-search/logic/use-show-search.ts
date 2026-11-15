@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { useShowSearchStore } from './show-search.store';
+import { useShowSearchStore } from '../stores/show-search.store';
 import { loadShows } from './tasks/load-shows';
 
 export const useShowSearch = () => {

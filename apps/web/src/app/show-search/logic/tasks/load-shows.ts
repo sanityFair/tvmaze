@@ -1,6 +1,6 @@
 import { fetchShowsPage } from '~/api/shows';
 
-import { useShowSearchStore } from '../show-search.store';
+import { useShowSearchStore } from '../../stores/show-search.store';
 
 const PAGE_SIZE = 3;
 

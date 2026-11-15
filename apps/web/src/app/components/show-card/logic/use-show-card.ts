@@ -1,7 +1,7 @@
 import type { Show } from '@tvmaze/contracts';
 
-import { selectIsFavorite, useFavoritesStore } from '~/app/logic/favorites.store';
 import { toggleFavorite } from '~/app/logic/tasks/toggle-favorite';
+import { selectIsFavorite, useFavoritesStore } from '~/app/stores/favorites.store';
 
 import { notifyFavoriteChange } from './notify-favorite-change';
 

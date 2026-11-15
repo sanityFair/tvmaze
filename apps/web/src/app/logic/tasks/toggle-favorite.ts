@@ -1,7 +1,7 @@
 import type { Show } from '@tvmaze/contracts';
 
 import { addFavorite, removeFavorite } from '~/api/favorites';
-import { useFavoritesStore } from '~/app/logic/favorites.store';
+import { useFavoritesStore } from '~/app/stores/favorites.store';
 
 const pendingShowIds = new Set<number>();
 

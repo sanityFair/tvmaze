@@ -1,7 +1,7 @@
 import debounce from 'debounce';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 
-import { useShowSearchStore } from '../../logic/show-search.store';
+import { useShowSearchStore } from '../../stores/show-search.store';
 
 const SEARCH_DEBOUNCE_MS = 400;
 

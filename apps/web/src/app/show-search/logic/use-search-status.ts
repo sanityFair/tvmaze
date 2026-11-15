@@ -1,7 +1,7 @@
 import type { ShowsPage } from '@tvmaze/contracts';
 
+import { useShowSearchStore } from '../stores/show-search.store';
 import { describeSearchError } from './describe-search-error';
-import { useShowSearchStore } from './show-search.store';
 
 export type SearchStatus = 'idle' | 'loading' | 'error' | 'empty' | 'results';
 

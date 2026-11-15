@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 
-import { useFavoritesStore } from '~/app/logic/favorites.store';
 import { loadFavorites } from '~/app/logic/tasks/load-favorites';
+import { useFavoritesStore } from '~/app/stores/favorites.store';
 
 import { collectDecades, getDecade } from './get-decade';
 

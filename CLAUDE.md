@@ -51,7 +51,8 @@ Git-хуки (Husky): `pre-commit` запускает lint-staged (oxlint --fix 
 - `main.tsx` — точка входа; монтирует `App` в `StrictMode` и импортирует `index.css`.
 - `app/` — корень приложения и иерархия UI (кнопка избранного в шапке переключает между `show-search/` и `favorite-shows/`).
 - `app/components/` — компоненты, которые используют независимые поддеревья (`show-card`, `feedback-message`).
-- `app/logic/` — Presenter корня, а также хранилище и Tasks, общие для нескольких поддеревьев (`favorites.store.ts`, `tasks/` избранного).
+- `app/logic/` — Presenter корня и Tasks, общие для нескольких поддеревьев (`tasks/` избранного).
+- `app/stores/` — хранилища, общие для независимых поддеревьев (`favorites.store.ts`). Хранилище поддерева лежит в `stores/` его владельца (`show-search/stores/`), а не в `logic/`.
 - `api/` — HTTP-клиент для бэкенда (`apiRequest`, `HttpError`).
 - `ui-kit/` — переиспользуемые примитивы shadcn/ui. **Это алиас `ui` для shadcn** (см. `components.json`): `pnpm dlx shadcn add <component>` запускается внутри `apps/web` и устанавливает компонент в `src/ui-kit/`.
 - `lib/` — общие технические утилиты. `cn` реэкспортируется из npm-пакета `cn` через `lib/utils.ts`.

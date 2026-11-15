@@ -1,5 +1,5 @@
+import { useShowSearchStore } from '../stores/show-search.store';
 import { formatResultsSummary } from './format-results-summary';
-import { useShowSearchStore } from './show-search.store';
 
 export const useResultsPage = () => {
   const response = useShowSearchStore((state) => state.response);

@@ -1,6 +1,6 @@
-import { useShowSearchStore } from '../../logic/show-search.store';
 import { useResultsPage } from '../../logic/use-results-page';
 import { useSearchStatus } from '../../logic/use-search-status';
+import { useShowSearchStore } from '../../stores/show-search.store';
 
 export const ALL_GENRES = '__all__';
 
