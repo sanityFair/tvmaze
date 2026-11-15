@@ -49,7 +49,7 @@ Git-хуки (Husky): `pre-commit` запускает lint-staged (oxlint --fix 
 Структура по дереву UI в духе Simple Architecture (см. `.claude/rules/architecture.md`). Прикладные слои (компоненты, Presenter-ы, Tasks, хранилища) живут только внутри `app/`; вне его — только технические модули (`api/`, `lib/`, `ui-kit/`):
 
 - `main.tsx` — точка входа; монтирует `App` в `StrictMode` и импортирует `index.css`.
-- `app/` — корень приложения и иерархия UI (кнопка избранного в шапке переключает между `show-search/` и `favorite-shows/`).
+- `app/` — корень приложения и иерархия UI (кнопка избранного в шапке переключает между `show-search/` и `favorite-shows/`). Экран избранного отражается в URL как `#favorites` (`app/logic/use-favorites-route.ts`, History API без роутера), поэтому работают кнопка «назад» браузера и прямые ссылки. Шоу, снятые с избранного на этом экране, остаются на полке приглушёнными до ухода с экрана (`favorite-shows/logic/use-retained-shows.ts`).
 - `app/components/` — компоненты, которые используют независимые поддеревья (`show-card`, `feedback-message`).
 - `app/logic/` — Presenter корня и Tasks, общие для нескольких поддеревьев (`tasks/` избранного).
 - `app/stores/` — хранилища, общие для независимых поддеревьев (`favorites.store.ts`). Хранилище поддерева лежит в `stores/` его владельца (`show-search/stores/`), а не в `logic/`.
