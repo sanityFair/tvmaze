@@ -35,6 +35,7 @@ export const ResultsPagination = () => {
             <PaginationItem key={item.page}>
               <PaginationLink
                 isActive={item.isActive}
+                disabled={pagination.isNavigating}
                 aria-label={`Page ${item.page}`}
                 onClick={() => pagination.goToPage(item.page)}
                 className="tabular-nums"

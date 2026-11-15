@@ -13,7 +13,7 @@ type ShowSearchState = {
 type ShowSearchActions = {
   setQuery: (query: string) => void;
   selectGenre: (genre: string | null) => void;
-  goToPage: (page: number) => void;
+  setPage: (page: number) => void;
   startLoading: () => void;
   receiveResults: (response: ShowsPage) => void;
   failLoading: (error: Error) => void;
@@ -36,7 +36,7 @@ export const useShowSearchStore = create<ShowSearchState & ShowSearchActions>()(
       return query === '' ? INITIAL_STATE : { query, genre: null, page: 1 };
     }),
   selectGenre: (genre) => set({ genre, page: 1 }),
-  goToPage: (page) => set({ page }),
+  setPage: (page) => set({ page }),
   startLoading: () => set({ isLoading: true, error: null }),
   receiveResults: (response) => set({ response, isLoading: false, error: null }),
   failLoading: (error) => set({ isLoading: false, error }),

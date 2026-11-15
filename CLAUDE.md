@@ -58,7 +58,7 @@ Git-хуки (Husky): `pre-commit` запускает lint-staged (oxlint --fix 
 - `lib/` — общие технические утилиты. `cn` реэкспортируется из npm-пакета `cn` через `lib/utils.ts`.
 - `index.css` — точка входа Tailwind 4, токены темы shadcn в CSS-переменных (oklch), тёмная тема через класс `.dark`, подключение шрифтов.
 
-Фильтрация и пагинация выполняются на сервере. `show-search.store.ts` хранит параметры поиска (`query`, `genre`, `page`) и последний ответ; Presenter-ы вызывают только действия хранилища (`setQuery`, `selectGenre`, `goToPage`). `useShowSearch` (Presenter владельца `show-search`) перезапускает единственную Task `loadShows` при изменении параметров; Task читает их из хранилища, запрашивает одну страницу у `/api/shows` и отменяет предыдущий запрос.
+Фильтрация и пагинация выполняются на сервере. `show-search.store.ts` хранит параметры поиска (`query`, `genre`, `page`) и последний ответ; Presenter-ы меняют критерии через действия хранилища (`setQuery`, `selectGenre`; оба сбрасывают страницу на 1). `useShowSearch` (Presenter владельца `show-search`) перезапускает Task `loadShows` при изменении `query`/`genre`; Task читает параметры из хранилища, запрашивает одну страницу у `/api/shows`, отменяет предыдущий запрос и возвращает `'loaded' | 'failed' | 'skipped'`. Смена страницы — только через Tasks `goToPage`, `goToNextPage`, `goToPreviousPage` (`logic/tasks/go-to-page.ts`): они проверяют границы, ставят `page` и сами вызывают `loadShows`, а при ошибке откатывают `page` к странице показанного ответа. В хранилище для страницы только сеттер `setPage`.
 
 ### api (`apps/api/src`)
 
