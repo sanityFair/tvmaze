@@ -36,7 +36,7 @@ export const App = () => {
         <div hidden={app.isFavoritesOpen}>
           <ShowSearch />
         </div>
-        {app.isFavoritesOpen && <FavoriteShows />}
+        {app.isFavoritesOpen && <FavoriteShows onBack={app.onCloseFavorites} />}
       </main>
       <BackdropSide side="right" />
       <Toaster />
