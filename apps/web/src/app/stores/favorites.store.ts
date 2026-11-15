@@ -30,5 +30,9 @@ export const useFavoritesStore = create<FavoritesState & FavoritesActions>()((se
     set((state) => ({ shows: state.shows.filter(({ id }) => id !== showId) })),
 }));
 
+export const selectFavoriteShows = (state: FavoritesState) => state.shows;
+export const selectFavoritesStatus = (state: FavoritesState) => state.status;
+export const selectFavoritesCount = (state: FavoritesState) => state.shows.length;
+
 export const selectIsFavorite = (showId: number) => (state: FavoritesState) =>
   state.shows.some(({ id }) => id === showId);

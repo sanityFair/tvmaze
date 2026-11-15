@@ -1,12 +1,17 @@
 import { useEffect } from 'react';
 
-import { useShowSearchStore } from '../stores/show-search.store';
+import {
+  selectPage,
+  selectGenre,
+  selectQuery,
+  useShowSearchStore,
+} from '../stores/show-search.store';
 import { loadShows } from './tasks/load-shows';
 
 export const useShowSearch = () => {
-  const query = useShowSearchStore((state) => state.query);
-  const genre = useShowSearchStore((state) => state.genre);
-  const page = useShowSearchStore((state) => state.page);
+  const query = useShowSearchStore(selectQuery);
+  const genre = useShowSearchStore(selectGenre);
+  const page = useShowSearchStore(selectPage);
 
   useEffect(() => {
     loadShows();

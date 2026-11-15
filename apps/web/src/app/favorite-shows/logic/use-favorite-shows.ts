@@ -1,7 +1,11 @@
 import { useMemo, useState } from 'react';
 
 import { loadFavorites } from '~/app/logic/tasks/load-favorites';
-import { useFavoritesStore } from '~/app/stores/favorites.store';
+import {
+  selectFavoriteShows,
+  selectFavoritesStatus,
+  useFavoritesStore,
+} from '~/app/stores/favorites.store';
 
 import { collectDecades, getDecade } from './get-decade';
 
@@ -10,8 +14,8 @@ export type FavoriteShowsStatus = 'loading' | 'error' | 'empty' | 'list';
 const pluralRules = new Intl.PluralRules('en-US');
 
 export const useFavoriteShows = () => {
-  const shows = useFavoritesStore((state) => state.shows);
-  const loadStatus = useFavoritesStore((state) => state.status);
+  const shows = useFavoritesStore(selectFavoriteShows);
+  const loadStatus = useFavoritesStore(selectFavoritesStatus);
   const [requestedDecade, setDecade] = useState<string | null>(null);
   const [requestedShowId, setSelectedShowId] = useState<number | null>(null);
 

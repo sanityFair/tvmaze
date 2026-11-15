@@ -1,6 +1,11 @@
 import type { ShowsPage } from '@tvmaze/contracts';
 
-import { useShowSearchStore } from '../stores/show-search.store';
+import {
+  selectError,
+  selectResponse,
+  selectQuery,
+  useShowSearchStore,
+} from '../stores/show-search.store';
 import { describeSearchError } from './describe-search-error';
 
 export type SearchStatus = 'idle' | 'loading' | 'error' | 'empty' | 'results';
@@ -16,9 +21,9 @@ const getSearchStatus = (
 };
 
 export const useSearchStatus = () => {
-  const query = useShowSearchStore((state) => state.query);
-  const response = useShowSearchStore((state) => state.response);
-  const error = useShowSearchStore((state) => state.error);
+  const query = useShowSearchStore(selectQuery);
+  const response = useShowSearchStore(selectResponse);
+  const error = useShowSearchStore(selectError);
 
   const status = getSearchStatus(query, response, error);
   const errorMessage = error ? describeSearchError(error) : null;

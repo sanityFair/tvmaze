@@ -1,10 +1,15 @@
-import { useShowSearchStore } from '../stores/show-search.store';
+import {
+  selectPage,
+  selectGenre,
+  selectResponse,
+  useShowSearchStore,
+} from '../stores/show-search.store';
 import { formatResultsSummary } from './format-results-summary';
 
 export const useResultsPage = () => {
-  const response = useShowSearchStore((state) => state.response);
-  const selectedGenre = useShowSearchStore((state) => state.genre);
-  const page = useShowSearchStore((state) => state.page);
+  const response = useShowSearchStore(selectResponse);
+  const selectedGenre = useShowSearchStore(selectGenre);
+  const page = useShowSearchStore(selectPage);
 
   return {
     genres: response?.genres ?? [],

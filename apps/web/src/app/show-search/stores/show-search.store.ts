@@ -41,3 +41,10 @@ export const useShowSearchStore = create<ShowSearchState & ShowSearchActions>()(
   receiveResults: (response) => set({ response, isLoading: false, error: null }),
   failLoading: (error) => set({ isLoading: false, error }),
 }));
+
+export const selectQuery = (state: ShowSearchState) => state.query;
+export const selectGenre = (state: ShowSearchState) => state.genre;
+export const selectPage = (state: ShowSearchState) => state.page;
+export const selectResponse = (state: ShowSearchState) => state.response;
+export const selectIsLoading = (state: ShowSearchState) => state.isLoading;
+export const selectError = (state: ShowSearchState) => state.error;
