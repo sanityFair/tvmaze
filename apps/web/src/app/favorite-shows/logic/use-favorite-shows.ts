@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { loadFavorites } from '~/app/logic/tasks/load-favorites';
+import { useFavoritesRoute } from '~/app/logic/use-favorites-route';
 import {
   selectFavoriteShows,
   selectFavoritesStatus,
@@ -15,6 +16,7 @@ export type FavoriteShowsStatus = 'loading' | 'error' | 'empty' | 'list';
 const pluralRules = new Intl.PluralRules('en-US');
 
 export const useFavoriteShows = () => {
+  const favoritesRoute = useFavoritesRoute();
   const favoriteShows = useFavoritesStore(selectFavoriteShows);
   const loadStatus = useFavoritesStore(selectFavoritesStatus);
   const shows = useRetainedShows(favoriteShows);
@@ -53,5 +55,6 @@ export const useFavoriteShows = () => {
     selectedShow,
     onSelectShow: setSelectedShowId,
     onRetry: () => loadFavorites(),
+    onBack: favoritesRoute.close,
   };
 };

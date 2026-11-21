@@ -5,9 +5,20 @@ const API_PREFIX = '/api';
 export type QueryParams = Record<string, string | number | boolean | null | undefined>;
 
 type RequestOptions = {
-  method?: 'GET' | 'PUT' | 'DELETE';
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
   query?: QueryParams;
+  body?: unknown;
   signal?: AbortSignal;
+};
+
+let unauthorizedListener: (() => void) | null = null;
+
+/** Called whenever the API answers 401, i.e. the session cookie is missing or expired. */
+export const onUnauthorized = (listener: () => void): (() => void) => {
+  unauthorizedListener = listener;
+  return () => {
+    if (unauthorizedListener === listener) unauthorizedListener = null;
+  };
 };
 
 export class HttpError extends Error {
@@ -40,13 +51,22 @@ const readErrorMessage = async (response: Response): Promise<string> => {
 };
 
 export const apiRequest = async <T>(path: string, options: RequestOptions = {}): Promise<T> => {
-  const { method = 'GET', query, signal } = options;
+  const { method = 'GET', query, body, signal } = options;
   const search = toQueryString(query);
   const url = `${API_PREFIX}${path}${search ? `?${search}` : ''}`;
 
-  const response = await fetch(url, { method, signal, headers: { Accept: 'application/json' } });
+  const headers: Record<string, string> = { Accept: 'application/json' };
+  if (body !== undefined) headers['Content-Type'] = 'application/json';
+
+  const response = await fetch(url, {
+    method,
+    signal,
+    headers,
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
 
   if (!response.ok) {
+    if (response.status === 401) unauthorizedListener?.();
     throw new HttpError(response.status, await readErrorMessage(response));
   }
 

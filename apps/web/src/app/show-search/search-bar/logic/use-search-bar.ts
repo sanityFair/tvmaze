@@ -1,13 +1,13 @@
 import debounce from 'debounce';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
 
-import { selectIsLoading, useShowSearchStore } from '../../stores/show-search.store';
+import { selectIsLoading, selectQuery, useShowSearchStore } from '../../stores/show-search.store';
 
 const SEARCH_DEBOUNCE_MS = 400;
 
 export const useSearchBar = () => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [value, setValue] = useState('');
+  const [value, setValue] = useState(() => selectQuery(useShowSearchStore.getState()));
   const isLoading = useShowSearchStore(selectIsLoading);
   const setQuery = useShowSearchStore((state) => state.setQuery);
   const [commitQuery] = useState(() => debounce(setQuery, SEARCH_DEBOUNCE_MS));

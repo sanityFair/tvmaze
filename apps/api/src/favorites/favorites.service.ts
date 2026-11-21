@@ -8,28 +8,32 @@ type FavoriteEntry = {
   addedAt: number;
 };
 
-const favorite: Record<number, FavoriteEntry> = {};
+/** Favorites of each user (by email), keyed by show id. */
+const favorites: Record<string, Record<number, FavoriteEntry>> = {};
+
+const getUserFavorites = (email: string): Record<number, FavoriteEntry> =>
+  (favorites[email] ??= {});
 
 @Injectable()
 export class FavoritesService {
   constructor(private readonly tvmaze: TvMazeClient) {}
 
-  list(): Show[] {
-    return Object.values(favorite)
+  list(email: string): Show[] {
+    return Object.values(favorites[email] ?? {})
       .sort((a, b) => b.addedAt - a.addedAt)
       .map(({ show }) => show);
   }
 
-  async add(showId: number): Promise<Show> {
-    const existing = favorite[showId];
+  async add(email: string, showId: number): Promise<Show> {
+    const existing = favorites[email]?.[showId];
     if (existing) return existing.show;
 
     const show = await this.tvmaze.getShow(showId);
-    favorite[showId] = { show, addedAt: Date.now() };
+    getUserFavorites(email)[showId] = { show, addedAt: Date.now() };
     return show;
   }
 
-  remove(showId: number): void {
-    delete favorite[showId];
+  remove(email: string, showId: number): void {
+    delete favorites[email]?.[showId];
   }
 }

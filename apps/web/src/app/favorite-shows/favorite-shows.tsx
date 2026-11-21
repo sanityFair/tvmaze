@@ -11,11 +11,7 @@ import { VhsShelf } from './vhs-shelf/vhs-shelf';
 
 const MEDIA_CLASS = 'flex size-14 items-center justify-center rounded-full border';
 
-type FavoriteShowsProps = {
-  onBack: () => void;
-};
-
-export const FavoriteShows = ({ onBack }: FavoriteShowsProps) => {
+export const FavoriteShows = () => {
   const favorites = useFavoriteShows();
 
   return (
@@ -24,7 +20,7 @@ export const FavoriteShows = ({ onBack }: FavoriteShowsProps) => {
       className="flex animate-fade flex-col gap-4 px-4 pt-4 pb-16 sm:px-8"
     >
       <div className="flex flex-col gap-3 border-b border-destructive/40 pb-4">
-        <Button variant="ghost" size="sm" onClick={onBack} className="-ml-2 w-fit gap-2">
+        <Button variant="ghost" size="sm" onClick={favorites.onBack} className="-ml-2 w-fit gap-2">
           <ArrowLeftIcon aria-hidden />
           Back to search
         </Button>

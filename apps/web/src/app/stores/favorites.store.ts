@@ -14,11 +14,13 @@ type FavoritesActions = {
   failLoading: () => void;
   addShow: (show: Show) => void;
   removeShow: (showId: number) => void;
+  reset: () => void;
 };
 
+const INITIAL_STATE: FavoritesState = { shows: [], status: 'idle' };
+
 export const useFavoritesStore = create<FavoritesState & FavoritesActions>()((set) => ({
-  shows: [],
-  status: 'idle',
+  ...INITIAL_STATE,
   startLoading: () => set({ status: 'loading' }),
   receiveFavorites: (shows) => set({ shows, status: 'ready' }),
   failLoading: () => set({ status: 'error' }),
@@ -28,6 +30,7 @@ export const useFavoritesStore = create<FavoritesState & FavoritesActions>()((se
     ),
   removeShow: (showId) =>
     set((state) => ({ shows: state.shows.filter(({ id }) => id !== showId) })),
+  reset: () => set(INITIAL_STATE),
 }));
 
 export const selectFavoriteShows = (state: FavoritesState) => state.shows;

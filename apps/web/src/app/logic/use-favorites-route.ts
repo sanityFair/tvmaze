@@ -1,41 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router';
 
-const FAVORITES_HASH = '#favorites';
+import { FAVORITES_PATH, HOME_PATH } from './paths';
 
-type HistoryState = { view?: string } | null;
+type FavoritesRouteState = { openedInApp?: boolean } | null;
 
-const isFavoritesLocation = () => window.location.hash === FAVORITES_HASH;
-
-/** Keeps the favorites view in the URL so the browser Back button and deep links work. */
+/** Opens and closes the favorites page so the browser Back button and deep links work. */
 export const useFavoritesRoute = () => {
-  const [isOpen, setOpen] = useState(isFavoritesLocation);
-
-  useEffect(() => {
-    const sync = () => setOpen(isFavoritesLocation());
-    window.addEventListener('popstate', sync);
-    window.addEventListener('hashchange', sync);
-    return () => {
-      window.removeEventListener('popstate', sync);
-      window.removeEventListener('hashchange', sync);
-    };
-  }, []);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const isOpen = location.pathname === FAVORITES_PATH;
 
   const open = () => {
-    if (isFavoritesLocation()) return;
-    window.history.pushState({ view: 'favorites' }, '', FAVORITES_HASH);
-    setOpen(true);
+    if (isOpen) return;
+    void navigate(FAVORITES_PATH, { state: { openedInApp: true } });
   };
 
   const close = () => {
-    if (!isFavoritesLocation()) return;
-    // We pushed this entry ourselves: going back keeps the history clean (popstate syncs state).
-    if ((window.history.state as HistoryState)?.view === 'favorites') {
-      window.history.back();
-      return;
-    }
-    const { pathname, search } = window.location;
-    window.history.replaceState(null, '', pathname + search);
-    setOpen(false);
+    if (!isOpen) return;
+    // We pushed this entry ourselves: going back keeps the history clean.
+    if ((location.state as FavoritesRouteState)?.openedInApp) void navigate(-1);
+    else void navigate(HOME_PATH, { replace: true });
   };
 
   return { isOpen, open, close };
