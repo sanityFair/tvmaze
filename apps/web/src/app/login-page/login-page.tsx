@@ -23,6 +23,7 @@ export const LoginPage = () => {
         </h1>
         <p className="max-w-sm text-sm text-muted-foreground">
           Sign in with your email to keep your own shelf of favorite shows. No password needed.
+          Searching works without an account.
         </p>
       </div>
 
@@ -55,6 +56,9 @@ export const LoginPage = () => {
         <Button type="submit" size="lg" disabled={login.isSubmitting} className="h-10 gap-2">
           {login.isSubmitting ? <Spinner aria-hidden /> : <SignInIcon aria-hidden />}
           Sign in
+        </Button>
+        <Button type="button" variant="ghost" onClick={login.onContinueAsGuest} className="h-10">
+          Continue without signing in
         </Button>
       </form>
     </section>

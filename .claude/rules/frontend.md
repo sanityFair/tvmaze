@@ -1,5 +1,9 @@
-# Frontend Rules
+---
+paths:
+  - 'apps/web/**'
+---
 
-- Prefer arrow functions for application components.
-- Use strict TypeScript.
-- Avoid unnecessary abstractions.
+# Правила фронтенда
+
+- Прикладные компоненты и хуки объявляются стрелочными функциями (`export const Foo = () => …`).
+- Строгий TypeScript: без `any` и без небезопасных приведений типов там, где тип можно вывести или проверить.

@@ -1,15 +1,13 @@
-import { Navigate, Route, Routes } from 'react-router';
+import { Route, Routes } from 'react-router';
 
 import { Toaster } from '~/ui-kit/toast';
 
 import { BackdropSide } from './backdrop-side/backdrop-side';
-import { FavoriteShows } from './favorite-shows/favorite-shows';
-import { FAVORITES_PATH, LOGIN_PATH } from './logic/paths';
+import { SessionGate } from './components/session-gate/session-gate';
+import { LOGIN_PATH } from './logic/paths';
 import { useApp } from './logic/use-app';
 import { LoginPage } from './login-page/login-page';
-import { MainLayout } from './main-layout/main-layout';
-import { SessionGate } from './session-gate/session-gate';
-import { ShowSearch } from './show-search/show-search';
+import { MainPage } from './main-page/main-page';
 
 export const App = () => {
   useApp();
@@ -22,13 +20,7 @@ export const App = () => {
           <Route element={<SessionGate access="guest" />}>
             <Route path={LOGIN_PATH} element={<LoginPage />} />
           </Route>
-          <Route element={<SessionGate access="user" />}>
-            <Route element={<MainLayout />}>
-              <Route index element={<ShowSearch />} />
-              <Route path={FAVORITES_PATH} element={<FavoriteShows />} />
-            </Route>
-          </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path="/*" element={<MainPage />} />
         </Routes>
       </main>
       <BackdropSide side="right" />
