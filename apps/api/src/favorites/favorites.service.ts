@@ -8,7 +8,6 @@ type FavoriteEntry = {
   addedAt: number;
 };
 
-/** Favorites of each user (by email), keyed by show id. */
 const favorites: Record<string, Record<number, FavoriteEntry>> = {};
 
 const getUserFavorites = (email: string): Record<number, FavoriteEntry> =>

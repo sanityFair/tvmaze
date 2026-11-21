@@ -3,15 +3,22 @@ import { useMemo, useState } from 'react';
 import { loadFavorites } from '~/app/main-page/logic/tasks/load-favorites';
 import { useFavoritesRoute } from '~/app/main-page/logic/use-favorites-route';
 import {
+  type FavoritesStatus,
   selectFavoriteShows,
   selectFavoritesStatus,
   useFavoritesStore,
-} from '~/app/stores/favorites.store';
+} from '~/app/main-page/stores/favorites.store';
 
-import { collectDecades, getDecade } from './get-decade';
+import { collectDecades, getDecade } from './decades';
 import { useRetainedShows } from './use-retained-shows';
 
 export type FavoritePageStatus = 'loading' | 'error' | 'empty' | 'list';
+
+const getFavoritePageStatus = (loadStatus: FavoritesStatus, count: number): FavoritePageStatus => {
+  if (loadStatus === 'error') return 'error';
+  if (loadStatus !== 'ready') return 'loading';
+  return count === 0 ? 'empty' : 'list';
+};
 
 const pluralRules = new Intl.PluralRules('en-US');
 
@@ -28,7 +35,8 @@ export const useFavoritePage = () => {
     return new Set(shows.filter(({ id }) => !favoriteIds.has(id)).map(({ id }) => id));
   }, [shows, favoriteShows]);
   const decades = useMemo(() => collectDecades(shows), [shows]);
-  const decade = requestedDecade && decades.includes(requestedDecade) ? requestedDecade : null;
+  const isDecadeAvailable = requestedDecade !== null && decades.includes(requestedDecade);
+  const decade = isDecadeAvailable ? requestedDecade : null;
   const visibleShows = useMemo(
     () => (decade ? shows.filter((show) => getDecade(show) === decade) : shows),
     [shows, decade],
@@ -36,16 +44,10 @@ export const useFavoritePage = () => {
   const selectedShow =
     visibleShows.find((show) => show.id === requestedShowId) ?? visibleShows[0] ?? null;
 
-  const getStatus = (): FavoritePageStatus => {
-    if (loadStatus === 'idle' || loadStatus === 'loading') return 'loading';
-    if (loadStatus === 'error') return 'error';
-    return shows.length === 0 ? 'empty' : 'list';
-  };
-
   const count = favoriteShows.length;
 
   return {
-    status: getStatus(),
+    status: getFavoritePageStatus(loadStatus, shows.length),
     countLabel: `${count} ${pluralRules.select(count) === 'one' ? 'tape' : 'tapes'}`,
     decades,
     selectedDecade: decade,

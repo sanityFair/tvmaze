@@ -1,13 +1,15 @@
 import { useEffect } from 'react';
 
 import { loadFavorites } from '~/app/main-page/logic/tasks/load-favorites';
+import { useFavoritesStore } from '~/app/main-page/stores/favorites.store';
 import { selectSessionStatus, useSessionStore } from '~/app/stores/session.store';
 
-/** Loads the user's favorites whenever a session starts: the header and every page use them. */
 export const useMainPage = () => {
   const sessionStatus = useSessionStore(selectSessionStatus);
+  const resetFavorites = useFavoritesStore((state) => state.reset);
 
   useEffect(() => {
-    if (sessionStatus === 'authenticated') void loadFavorites();
-  }, [sessionStatus]);
+    if (sessionStatus === 'authenticated') loadFavorites();
+    if (sessionStatus === 'anonymous') resetFavorites();
+  }, [sessionStatus, resetFavorites]);
 };

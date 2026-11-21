@@ -24,9 +24,11 @@ pnpm preview        # раздать собранный web
 pnpm typecheck      # tsc во всех пакетах
 pnpm lint           # oxlint (весь репозиторий)
 pnpm lint:fix       # oxlint --fix
+pnpm lint:deps      # dependency-cruiser: архитектурные правила импортов
+pnpm deps:graph     # граф импортов web/app в deps-graph.mmd (Mermaid, в .gitignore)
 pnpm format         # oxfmt (с записью)
 pnpm format:check   # oxfmt --check
-pnpm check          # typecheck + lint + format:check — запускать перед коммитом
+pnpm check          # typecheck + lint + lint:deps + format:check — запускать перед коммитом
 ```
 
 Зависимости добавляются в пакет командой `pnpm --filter @tvmaze/<web|api> add <pkg>`. Тестовый раннер пока не настроен.
@@ -38,6 +40,7 @@ Git-хуки (Husky): `pre-commit` запускает lint-staged (oxlint --fix 
 - **Oxlint/Oxfmt** вместо ESLint/Prettier, настроены один раз в корне (`.oxlintrc.json`, `.oxfmtrc.json`). Форматирование: одинарные кавычки, точки с запятой, завершающие запятые, ширина строки 100, отступ 2 пробела.
 - Oxfmt сортирует импорты по группам, разделённым пустой строкой: builtin/external → internal (`~/...`) → относительные → side-effect импорты → стили. Порядок оставляем форматтеру.
 - Линтер требует `max-lines: 120` на файл (без пустых строк и комментариев), кроме `apps/web/src/ui-kit/`, а также `react/rules-of-hooks`, `react/exhaustive-deps` и `jsx-a11y`.
+- **dependency-cruiser** (`.dependency-cruiser.cjs`) проверяет граф импортов: нет циклов, неразрешённых и неиспользуемых модулей; web и api не импортируют друг друга, `@tvmaze/contracts` — только `import type`; правила `architecture.md` для web (View не ходит в api/stores/tasks, Tasks без React, stores без логики, поддеревья `app/` и `main-page/` не импортируют друг друга). TS 7.0 не даёт dependency-cruiser нужного API, поэтому код разбирается парсером SWC (`@swc/core`). При новой архитектурной договорённости добавляйте правило туда же.
 - Везде TypeScript 7 с `verbatimModuleSyntax` (используйте `import type` / inline-модификатор `type`).
 - **web**: `erasableSyntaxOnly` (без enum, namespace и parameter properties). Алиас `~/*` → `apps/web/src/*` (vite.config.ts, tsconfig.json, tsconfig.app.json).
 - **api** — модули и компиляция:
@@ -65,14 +68,19 @@ Git-хуки (Husky): `pre-commit` запускает lint-staged (oxlint --fix 
   - Поиск доступен без входа. `/favorites` закрыт layout-маршрутом `app/components/session-gate/`: пока сессия не проверена — спиннер, без сессии — редирект на `/login` с `state.from`. Гостю Task `toggleFavorite` возвращает `'sign-in-required'`, и Presenter карточки открывает логин (`main-page/logic/use-sign-in-route.ts`).
   - Открытие/закрытие избранного — `main-page/logic/use-favorites-route.ts`. Шоу, снятые с избранного на этом экране, остаются на полке приглушёнными до ухода с экрана (`favorite-page/logic/use-retained-shows.ts`).
 - `components/` — в `components/` ближайшего общего владельца: `app/components/session-gate` (App и MainPage), `main-page/components/` — `show-card`, `feedback-message` (страницы поиска и избранного).
-- `logic/` — Presenter и Tasks владельца: `app/logic/` — `paths.ts`, Tasks сессии (`restore-session` — `GET /api/auth/me` при старте, сервер продлевает cookie; `log-in`, `log-out`, `clear-session` — сброс сессии и избранного; `watch-session-expiry` — подписка на 401 из `apiRequest`); `main-page/logic/tasks/` — `load-favorites`, `toggle-favorite`.
-- `app/stores/` — хранилища, общие для независимых поддеревьев (`session.store.ts` — `status: 'unknown' | 'authenticated' | 'anonymous'` и `user`; `favorites.store.ts` — его сбрасывает `clear-session`). Хранилище поддерева лежит в `stores/` его владельца (`show-search-page/stores/`), а не в `logic/`.
+- `logic/` — Presenter и Tasks владельца: `app/logic/` — `paths.ts`, Tasks сессии (`restore-session` — `GET /api/auth/me` при старте, сервер продлевает cookie; `log-in`, `log-out`, `watch-session-expiry` — выход из сессии при 401 из `apiRequest`); `main-page/logic/tasks/` — `load-favorites`, `toggle-favorite`. `main-page/logic/use-main-page.ts` загружает избранное при входе и сбрасывает при выходе.
+- `stores/` — хранилище лежит у ближайшего общего владельца: `app/stores/session.store.ts` (`status: 'unknown' | 'authenticated' | 'anonymous'` и `user`) нужен всему приложению; `main-page/stores/favorites.store.ts` — только поддереву `main-page` (шапка, карточки, страница избранного). Хранилище не кладётся в `logic/`.
 - `api/` — HTTP-клиент для бэкенда (`apiRequest`, `HttpError`, `onUnauthorized`). Сессия — HttpOnly-cookie, фронтенд токен не видит и не хранит.
 - `ui-kit/` — переиспользуемые примитивы shadcn/ui. **Это алиас `ui` для shadcn** (см. `components.json`): `pnpm dlx shadcn add <component>` запускается внутри `apps/web` и устанавливает компонент в `src/ui-kit/`.
 - `lib/` — общие технические утилиты. `cn` реэкспортируется из npm-пакета `cn` через `lib/utils.ts`.
 - `index.css` — точка входа Tailwind 4, токены темы shadcn в CSS-переменных (oklch), тёмная тема через класс `.dark`, подключение шрифтов.
 
-Фильтрация и пагинация выполняются на сервере. `show-search.store.ts` хранит параметры поиска (`query`, `genre`, `page`) и последний ответ; Presenter-ы меняют критерии через действия хранилища (`setQuery`, `selectGenre`; оба сбрасывают страницу на 1). `useShowSearchPage` (Presenter `show-search-page`) перезапускает Task `loadShows` при изменении `query`/`genre`; Task читает параметры из хранилища, запрашивает одну страницу у `/api/shows`, отменяет предыдущий запрос и возвращает `'loaded' | 'failed' | 'skipped'`. Смена страницы — только через Tasks `goToPage`, `goToNextPage`, `goToPreviousPage` (`logic/tasks/go-to-page.ts`): они проверяют границы, ставят `page` и сами вызывают `loadShows`, а при ошибке откатывают `page` к странице показанного ответа. В хранилище для страницы только сеттер `setPage`.
+Поиск (`main-page/show-search-page/`), фильтрация и пагинация выполняются на сервере, хранилища у поиска нет:
+
+- Критерии — в URL: `?q=&genre=&page=` (те же имена, что у `GET /api/shows`). `logic/use-search-criteria.ts` читает их и меняет: `setQuery` (с `replace`, сбрасывает жанр и страницу), `setGenre` (сбрасывает страницу), `setPage`.
+- Task `searchShows(criteria, signal)` возвращает `{ status: 'loaded', results } | { status: 'failed', failure } | { status: 'cancelled' }`; `failure.reason` (`offline`, `rate-limited`, `unavailable`, `server-error`, `rejected`) скрывает HTTP, текст даёт `describeSearchFailure`.
+- `logic/use-search-results.ts` вызывает Task при смене критериев, отменяет устаревший запрос и держит последний ответ, пока грузится следующий или если он упал. `isLoading` вычисляется: ответ ещё не пришёл для текущих критериев.
+- `useShowSearchPage` — Presenter страницы: считает статус и передаёт детям (`SearchBar`, `GenreChips`, `SearchFeedback`, `ShowList`, `ResultsPagination`) данные и обработчики пропсами. `SearchBar` держит введённый текст локально и отправляет его с debounce 400 мс.
 
 ### api (`apps/api/src`)
 

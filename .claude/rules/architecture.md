@@ -63,7 +63,7 @@ paths:
 
 Tasks инкапсулируют действия, выполняемые системой. Для них используется директория `tasks/`; отдельную директорию `interactors/` создавать не требуется.
 
-Примеры из проекта: `loadShows`, `goToPage`, `toggleFavorite`, `logIn`, `logOut`, `restoreSession`.
+Примеры из проекта: `searchShows`, `toggleFavorite`, `logIn`, `logOut`, `restoreSession`.
 
 ### Правила Tasks
 
@@ -103,7 +103,7 @@ Zustand используется как основной менеджер раз
 - Обычно управляется Presenter или специализированным хуком через `useState` или `useReducer`.
 - Не переносится в Zustand без необходимости совместного использования.
 - Может включать `loading`, `error`, значения полей и состояние элементов управления.
-- Критерии и результаты, которые читают несколько компонентов поддерева и его Tasks (параметры поиска, страница, последний ответ), хранятся в хранилище этого поддерева (`main-page/show-search-page/stores/show-search.store.ts`), а не дублируются в локальном состоянии.
+- Состояние страницы, которое должно переживать навигацию и попадать в ссылку (критерии поиска, фильтры, пагинация), хранится в URL (query-строка), а не в хранилище. Имена параметров совпадают с параметрами API (`?q=&genre=&page=` ↔ `GET /api/shows`).
 
 ### Разделяемое состояние
 
@@ -172,7 +172,7 @@ Zustand используется как основной менеджер раз
 app/
 ├── app.tsx                        # рамка приложения, маршруты /login и /*
 ├── logic/                         # use-app.ts, paths.ts, tasks/ сессии (log-in.ts, log-out.ts, …)
-├── stores/                        # session.store.ts, favorites.store.ts
+├── stores/                        # session.store.ts — нужна всему приложению
 ├── components/
 │   └── session-gate/              # используется App и MainPage
 ├── backdrop-side/
@@ -181,18 +181,18 @@ app/
     ├── main-page.tsx              # шапка + вложенные маршруты страниц
     ├── logic/                     # use-main-page.ts, use-favorites-route.ts, use-sign-in-route.ts
     │   └── tasks/                 # load-favorites.ts, toggle-favorite.ts
+    ├── stores/                    # favorites.store.ts — нужна только поддереву main-page
     ├── components/                # show-card/, feedback-message/ — общие для страниц main-page
     ├── main-header/
     │   └── user-menu/
     ├── show-search-page/
     │   ├── show-search-page.tsx
     │   ├── logic/
-    │   │   ├── use-show-search-page.ts
+    │   │   ├── use-show-search-page.ts  # Presenter: собирает пропсы для детей
+    │   │   ├── use-search-criteria.ts   # q, genre, page в URL
+    │   │   ├── use-search-results.ts    # вызов Task и состояние загрузки
     │   │   └── tasks/
-    │   │       ├── load-shows.ts
-    │   │       └── go-to-page.ts
-    │   ├── stores/
-    │   │   └── show-search.store.ts
+    │   │       └── search-shows.ts
     │   ├── search-bar/
     │   ├── genre-chips/
     │   ├── search-feedback/
@@ -224,10 +224,10 @@ show-search-page/
 ├── show-search-page.tsx
 └── logic/
     ├── use-show-search-page.ts
-    ├── describe-search-error.ts
+    ├── describe-search-failure.ts
     ├── format-results-summary.ts
     └── tasks/
-        └── load-shows.ts
+        └── search-shows.ts
 ```
 
 Не следует использовать общие названия вроде `helper`, `utils` или `manager`, если они не раскрывают ответственность модуля.
@@ -272,6 +272,7 @@ show-search-page/
 - Маршруты объявляет компонент, который владеет страницами, — через вложенные `<Routes>`. Так дерево папок повторяет дерево UI: `app.tsx` объявляет `/login` и `/*`, а `main-page.tsx` — свои страницы (`/`, `/favorites`), которые лежат внутри `main-page/`.
 - Навигацией (`useNavigate`) управляют Presenter-ы. View может рендерить `<Navigate>` или `<Outlet>` по готовому решению своего Presenter.
 - Повторяющиеся переходы оформляются хуками в `logic/` ближайшего общего владельца (`main-page/logic/use-sign-in-route.ts`, `use-favorites-route.ts`). Тип `location.state`, который читают разные поддеревья, объявляется рядом с путями (`LoginRouteState` в `paths.ts`).
+- Критерии, которые должны жить в адресе (поиск, фильтр, страница), читаются и меняются хуком владельца поверх `useSearchParams` (`use-search-criteria.ts`); дочерние компоненты получают значения и обработчики пропсами.
 - Tasks не навигируют: если сценарий требует перехода, Task возвращает результат по контракту (`toggleFavorite` → `'sign-in-required'`), а переход выполняет Presenter.
 - Доступ к страницам проверяет layout-маршрут `app/components/session-gate` (`access="user" | "guest"`), а не сами страницы.
 - Данные сессии (`status`, `user`) живут в `app/stores/session.store.ts`; вход, выход и восстановление сессии — Tasks в `app/logic/tasks/`. Токен хранится в HttpOnly-cookie и в коде фронтенда не появляется.

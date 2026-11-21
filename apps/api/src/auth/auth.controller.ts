@@ -24,7 +24,6 @@ export class AuthController {
     clearSessionCookie(response);
   }
 
-  /** Returns the current user and extends the session (sliding expiration). */
   @Get('me')
   @UseGuards(AuthGuard)
   me(

@@ -46,3 +46,6 @@ Thumbs.db
 docs/
 # Vercel
 .vercel
+
+# dependency graph (pnpm deps:graph)
+deps-graph.mmd

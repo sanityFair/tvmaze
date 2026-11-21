@@ -11,7 +11,6 @@ const ERROR_MESSAGES: Partial<Record<LoginStatus, string>> = {
   failed: 'Couldn’t sign in. Make sure the API is running, then try again.',
 };
 
-/** After a successful sign-in the session gate redirects away from this page. */
 export const useLoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
@@ -35,7 +34,7 @@ export const useLoginPage = () => {
       setEmail(event.target.value);
       if (status !== 'submitting') setStatus('idle');
     },
-    onSubmit: (event: FormEvent<HTMLFormElement>) => void handleSubmit(event),
-    onContinueAsGuest: () => void navigate(HOME_PATH),
+    onSubmit: handleSubmit,
+    onContinueAsGuest: () => navigate(HOME_PATH),
   };
 };

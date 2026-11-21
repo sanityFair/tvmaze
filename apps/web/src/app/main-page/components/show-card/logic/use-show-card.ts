@@ -2,7 +2,7 @@ import type { Show } from '@tvmaze/contracts';
 
 import { toggleFavorite } from '~/app/main-page/logic/tasks/toggle-favorite';
 import { useSignInRoute } from '~/app/main-page/logic/use-sign-in-route';
-import { selectIsFavorite, useFavoritesStore } from '~/app/stores/favorites.store';
+import { selectIsFavorite, useFavoritesStore } from '~/app/main-page/stores/favorites.store';
 
 import { notifyFavoriteChange } from './notify-favorite-change';
 
@@ -34,7 +34,7 @@ export const useShowCard = (show: Show) => {
     isFavorite,
     favoriteLabel: `Favorite ${show.name}`,
     onToggleFavorite: () => {
-      void toggleFavorite(show).then((result) => {
+      toggleFavorite(show).then((result) => {
         if (result === 'sign-in-required') openSignIn();
         else notifyFavoriteChange(show, result);
       });

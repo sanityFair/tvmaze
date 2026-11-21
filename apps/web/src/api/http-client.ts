@@ -13,7 +13,6 @@ type RequestOptions = {
 
 let unauthorizedListener: (() => void) | null = null;
 
-/** Called whenever the API answers 401, i.e. the session cookie is missing or expired. */
 export const onUnauthorized = (listener: () => void): (() => void) => {
   unauthorizedListener = listener;
   return () => {
@@ -30,6 +29,9 @@ export class HttpError extends Error {
     this.status = status;
   }
 }
+
+export const hasHttpStatus = (error: unknown, status: number): boolean =>
+  error instanceof HttpError && error.status === status;
 
 export const toQueryString = (params: QueryParams = {}): string => {
   const searchParams = new URLSearchParams();

@@ -5,7 +5,7 @@ import { watchSessionExpiry } from './tasks/watch-session-expiry';
 
 export const useApp = () => {
   useEffect(() => {
-    void restoreSession();
+    restoreSession();
     return watchSessionExpiry();
   }, []);
 };

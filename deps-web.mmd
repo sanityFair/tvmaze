@@ -1,0 +1,75 @@
+flowchart LR
+
+subgraph 0["apps"]
+subgraph 1["web"]
+subgraph 2["src"]
+subgraph 3["app"]
+4["app.tsx"]
+subgraph 5["backdrop-side"]
+6[" "]
+end
+subgraph 7["components"]
+8[" "]
+end
+subgraph 9["logic"]
+A[" "]
+end
+subgraph B["login-page"]
+C[" "]
+end
+subgraph D["main-page"]
+E[" "]
+subgraph F["components"]
+G[" "]
+end
+subgraph H["favorite-page"]
+I[" "]
+end
+subgraph J["logic"]
+K[" "]
+end
+subgraph L["main-header"]
+M[" "]
+end
+subgraph N["show-search-page"]
+O[" "]
+end
+subgraph P["stores"]
+Q[" "]
+end
+end
+subgraph R["stores"]
+S[" "]
+end
+end
+end
+end
+end
+4-->6
+4-->8
+4-->A
+4-->C
+4-->E
+8-->A
+8-->S
+A-->S
+C-->A
+E-->I
+E-->K
+E-->M
+E-->O
+E-->8
+E-->A
+G-->K
+G-->Q
+I-->G
+I-->K
+I-->Q
+K-->Q
+K-->S
+K-->A
+M-->K
+M-->Q
+M-->S
+M-->A
+O-->G

@@ -1,7 +1,6 @@
 import type { SessionUser } from '@tvmaze/contracts';
 import { create } from 'zustand';
 
-/** `unknown` — the session has not been checked with the API yet. */
 export type SessionStatus = 'unknown' | 'authenticated' | 'anonymous';
 
 type SessionState = {

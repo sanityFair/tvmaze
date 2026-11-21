@@ -1,24 +1,22 @@
+import type { Show } from '@tvmaze/contracts';
+
 import { ShowCard } from '~/app/main-page/components/show-card/show-card';
 
-import { useShowList } from './logic/use-show-list';
+type ShowListProps = {
+  shows: Show[];
+  summary: string;
+  isUpdating: boolean;
+};
 
-export const ShowList = () => {
-  const list = useShowList();
-
-  if (!list.isVisible) return null;
-
+export const ShowList = ({ shows, summary, isUpdating }: ShowListProps) => {
   return (
-    <section
-      aria-label="Search results"
-      aria-busy={list.isUpdating}
-      className="flex flex-col gap-4"
-    >
-      <output className="text-sm text-muted-foreground">{list.summary}</output>
+    <section aria-label="Search results" aria-busy={isUpdating} className="flex flex-col gap-4">
+      <output className="text-sm text-muted-foreground">{summary}</output>
       <ul
         className="flex flex-col gap-4 transition-opacity duration-200 data-[updating=true]:opacity-60 [&>li]:animate-rise [&>li:nth-child(2)]:[animation-delay:70ms] [&>li:nth-child(3)]:[animation-delay:140ms]"
-        data-updating={list.isUpdating}
+        data-updating={isUpdating}
       >
-        {list.shows.map((show) => (
+        {shows.map((show) => (
           <li key={show.id}>
             <ShowCard show={show} />
           </li>

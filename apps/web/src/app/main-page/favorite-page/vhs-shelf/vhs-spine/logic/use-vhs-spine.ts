@@ -10,10 +10,11 @@ export const useVhsSpine = (show: Show, index: number, isRemoved: boolean) => {
   const design = useMemo(() => getSpineDesign(show), [show]);
   const year = show.premiered?.slice(0, 4) ?? null;
   const rating = show.rating.average;
+  const labelParts = isRemoved ? [show.name, year, 'removed from favorites'] : [show.name, year];
 
   return {
     title: show.name,
-    label: [show.name, year, isRemoved && 'removed from favorites'].filter(Boolean).join(', '),
+    label: labelParts.filter((part) => part !== null).join(', '),
     studio: show.type,
     year,
     rating: rating === null ? null : rating.toFixed(1),

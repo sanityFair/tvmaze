@@ -1,6 +1,6 @@
 import { useFavoritesRoute } from '~/app/main-page/logic/use-favorites-route';
 import { useSignInRoute } from '~/app/main-page/logic/use-sign-in-route';
-import { selectFavoritesCount, useFavoritesStore } from '~/app/stores/favorites.store';
+import { selectFavoritesCount, useFavoritesStore } from '~/app/main-page/stores/favorites.store';
 import { selectSessionStatus, useSessionStore } from '~/app/stores/session.store';
 
 const pluralRules = new Intl.PluralRules('en-US');

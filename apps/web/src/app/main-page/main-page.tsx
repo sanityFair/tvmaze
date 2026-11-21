@@ -8,7 +8,6 @@ import { useMainPage } from './logic/use-main-page';
 import { MainHeader } from './main-header/main-header';
 import { ShowSearchPage } from './show-search-page/show-search-page';
 
-/** Header plus the pages under it; search is public, favorites need a session. */
 export const MainPage = () => {
   useMainPage();
 

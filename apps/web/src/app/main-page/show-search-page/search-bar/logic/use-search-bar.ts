@@ -1,37 +1,34 @@
-import debounce from 'debounce';
 import { type ChangeEvent, useEffect, useRef, useState } from 'react';
-
-import { selectIsLoading, selectQuery, useShowSearchStore } from '../../stores/show-search.store';
 
 const SEARCH_DEBOUNCE_MS = 400;
 
-export const useSearchBar = () => {
+export const useSearchBar = (query: string, onQueryChange: (query: string) => void) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const [value, setValue] = useState(() => selectQuery(useShowSearchStore.getState()));
-  const isLoading = useShowSearchStore(selectIsLoading);
-  const setQuery = useShowSearchStore((state) => state.setQuery);
-  const [commitQuery] = useState(() => debounce(setQuery, SEARCH_DEBOUNCE_MS));
+  const [value, setValue] = useState(query);
+  const [syncedQuery, setSyncedQuery] = useState(query);
 
-  useEffect(() => () => commitQuery.clear(), [commitQuery]);
+  if (query !== syncedQuery) {
+    setSyncedQuery(query);
+    if (query !== value.trim()) setValue(query);
+  }
 
-  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setValue(event.target.value);
-    commitQuery(event.target.value.trim());
-  };
+  const pendingQuery = value.trim();
 
-  const handleClear = () => {
-    commitQuery.clear();
-    setValue('');
-    setQuery('');
-    inputRef.current?.focus();
-  };
+  useEffect(() => {
+    if (pendingQuery === query) return;
+    const timer = setTimeout(() => onQueryChange(pendingQuery), SEARCH_DEBOUNCE_MS);
+    return () => clearTimeout(timer);
+  }, [pendingQuery, query, onQueryChange]);
 
   return {
     inputRef,
     value,
-    isLoading,
     canClear: value !== '',
-    onChange: handleChange,
-    onClear: handleClear,
+    onChange: (event: ChangeEvent<HTMLInputElement>) => setValue(event.target.value),
+    onClear: () => {
+      setValue('');
+      onQueryChange('');
+      inputRef.current?.focus();
+    },
   };
 };

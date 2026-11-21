@@ -1,32 +1,23 @@
-import { useState } from 'react';
-
-import { goToNextPage, goToPage, goToPreviousPage } from '../../logic/tasks/go-to-page';
-import { useResultsPage } from '../../logic/use-results-page';
-import { useSearchStatus } from '../../logic/use-search-status';
 import { getPageItems } from './get-page-items';
 
-export const useResultsPagination = () => {
-  const { status } = useSearchStatus();
-  const { page, totalPages } = useResultsPage();
-  const [isNavigating, setNavigating] = useState(false);
-
-  const navigate = async (transition: () => Promise<void>) => {
-    setNavigating(true);
-    try {
-      await transition();
-    } finally {
-      setNavigating(false);
-    }
-  };
-
-  return {
-    isVisible: status === 'results' && totalPages > 1,
-    items: getPageItems(page, totalPages),
-    isNavigating,
-    canGoPrevious: !isNavigating && page > 1,
-    canGoNext: !isNavigating && page < totalPages,
-    goToPrevious: () => void navigate(goToPreviousPage),
-    goToNext: () => void navigate(goToNextPage),
-    goToPage: (target: number) => void navigate(() => goToPage(target)),
-  };
+export type ResultsPaginationProps = {
+  page: number;
+  totalPages: number;
+  isBusy: boolean;
+  onPageChange: (page: number) => void;
 };
+
+export const useResultsPagination = ({
+  page,
+  totalPages,
+  isBusy,
+  onPageChange,
+}: ResultsPaginationProps) => ({
+  items: getPageItems(page, totalPages),
+  isBusy,
+  canGoPrevious: !isBusy && page > 1,
+  canGoNext: !isBusy && page < totalPages,
+  goToPrevious: () => onPageChange(page - 1),
+  goToNext: () => onPageChange(page + 1),
+  goToPage: onPageChange,
+});

@@ -8,12 +8,10 @@ import {
   PaginationPrevious,
 } from '~/ui-kit/pagination';
 
-import { useResultsPagination } from './logic/use-results-pagination';
+import { type ResultsPaginationProps, useResultsPagination } from './logic/use-results-pagination';
 
-export const ResultsPagination = () => {
-  const pagination = useResultsPagination();
-
-  if (!pagination.isVisible) return null;
+export const ResultsPagination = (props: ResultsPaginationProps) => {
+  const pagination = useResultsPagination(props);
 
   return (
     <Pagination aria-label="Results pages" className="pt-2">
@@ -35,7 +33,7 @@ export const ResultsPagination = () => {
             <PaginationItem key={item.page}>
               <PaginationLink
                 isActive={item.isActive}
-                disabled={pagination.isNavigating}
+                disabled={pagination.isBusy}
                 aria-label={`Page ${item.page}`}
                 onClick={() => pagination.goToPage(item.page)}
                 className="tabular-nums"

@@ -1,6 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
 
-/** Sessions live in a signed token, so any server instance can verify them without shared memory. */
 export const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 const DEV_SECRET = 'tvmaze-dev-session-secret';
@@ -42,7 +41,6 @@ export const createSessionToken = (email: string, now = Date.now()): string => {
   return `${data}.${sign(data)}`;
 };
 
-/** Returns the session email, or `null` for a forged, malformed or expired token. */
 export const readSessionToken = (token: string, now = Date.now()): string | null => {
   const [data, signature, ...rest] = token.split('.');
   if (!data || !signature || rest.length > 0) return null;

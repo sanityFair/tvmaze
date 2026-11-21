@@ -17,9 +17,8 @@ export const useUserMenu = () => {
     isLoggingOut,
     onLogOut: () => {
       setLoggingOut(true);
-      // Favorites are personal, so leave them for the public search before the session ends.
-      if (favoritesRoute.isOpen) void navigate(HOME_PATH, { replace: true });
-      void logOut();
+      if (favoritesRoute.isOpen) navigate(HOME_PATH, { replace: true });
+      logOut();
     },
   };
 };

@@ -1,23 +1,53 @@
-import { useEffect, useRef } from 'react';
+import type { ShowsPage } from '@tvmaze/contracts';
 
-import { selectGenre, selectQuery, useShowSearchStore } from '../stores/show-search.store';
-import { loadShows } from './tasks/load-shows';
+import { describeSearchFailure } from './describe-search-failure';
+import { formatResultsSummary } from './format-results-summary';
+import { getSearchStatus } from './get-search-status';
+import { useSearchCriteria } from './use-search-criteria';
+import { useSearchResults } from './use-search-results';
 
-const toCriteriaKey = (query: string, genre: string | null) => JSON.stringify([query, genre]);
+const NO_RESULTS = { shows: [], summary: '', genres: [], page: 1, totalPages: 1 };
 
-/** Reloads results when the search criteria change; page changes go through `goToPage`. */
+const describeResults = (results: ShowsPage) => ({
+  shows: results.items,
+  summary: formatResultsSummary(results.total, results.totalUnfiltered, results.genre),
+  genres: results.genres,
+  page: results.page,
+  totalPages: results.totalPages,
+});
+
 export const useShowSearchPage = () => {
-  const query = useShowSearchStore(selectQuery);
-  const genre = useShowSearchStore(selectGenre);
-  // Returning from another page keeps the results already in the store instead of refetching.
-  const loadedKey = useRef(
-    useShowSearchStore.getState().response ? toCriteriaKey(query, genre) : null,
-  );
+  const search = useSearchCriteria();
+  const { results, isLoading, failure } = useSearchResults(search.criteria);
 
-  useEffect(() => {
-    const key = toCriteriaKey(query, genre);
-    if (loadedKey.current === key) return;
-    loadedKey.current = key;
-    void loadShows();
-  }, [query, genre]);
+  const status = getSearchStatus(search.criteria.q, results, failure);
+  const hasResults = status === 'results' && results !== null;
+  const view = hasResults ? describeResults(results) : NO_RESULTS;
+
+  const errorMessage = failure ? describeSearchFailure(failure) : null;
+  const isShowingPreviousResults = status === 'results' || status === 'empty';
+
+  return {
+    query: search.criteria.q,
+    isLoading,
+    onQueryChange: search.setQuery,
+
+    status,
+    errorMessage,
+    inlineErrorMessage: isShowingPreviousResults ? errorMessage : null,
+
+    hasResults,
+    shows: view.shows,
+    summary: view.summary,
+
+    hasGenres: view.genres.length > 0,
+    genres: view.genres,
+    selectedGenre: search.criteria.genre,
+    onGenreChange: search.setGenre,
+
+    hasPages: view.totalPages > 1,
+    page: view.page,
+    totalPages: view.totalPages,
+    onPageChange: search.setPage,
+  };
 };
