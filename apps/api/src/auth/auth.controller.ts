@@ -1,5 +1,5 @@
 import { Body, Controller, Get, HttpCode, Post, Res, UseGuards } from '@nestjs/common';
-import type { SessionUser } from '@tvmaze/contracts';
+import type { SessionResponse } from '@tvmaze/contracts';
 import type { ServerResponse } from 'node:http';
 
 import { AuthGuard } from './auth.guard.js';
@@ -12,10 +12,13 @@ import { createSessionToken } from './logic/session-token.js';
 export class AuthController {
   @Post('login')
   @HttpCode(200)
-  login(@Body() body: unknown, @Res({ passthrough: true }) response: ServerResponse): SessionUser {
+  login(
+    @Body() body: unknown,
+    @Res({ passthrough: true }) response: ServerResponse,
+  ): SessionResponse {
     const email = parseEmail(body);
     writeSessionCookie(response, createSessionToken(email));
-    return { email };
+    return { user: { email } };
   }
 
   @Post('logout')
@@ -29,8 +32,8 @@ export class AuthController {
   me(
     @CurrentUser() email: string,
     @Res({ passthrough: true }) response: ServerResponse,
-  ): SessionUser {
+  ): SessionResponse {
     writeSessionCookie(response, createSessionToken(email));
-    return { email };
+    return { user: { email } };
   }
 }

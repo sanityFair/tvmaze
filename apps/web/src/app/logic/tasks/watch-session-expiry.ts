@@ -1,5 +1,7 @@
 import { onUnauthorized } from '~/api/http-client';
-import { useSessionStore } from '~/app/stores/session.store';
+import { useSessionStore } from '~/stores/session.store';
 
-export const watchSessionExpiry = (): (() => void) =>
-  onUnauthorized(() => useSessionStore.getState().signOut());
+export const watchSessionExpiry = (): (() => void) => {
+  const session = useSessionStore.getState();
+  return onUnauthorized(() => session.signOut());
+};

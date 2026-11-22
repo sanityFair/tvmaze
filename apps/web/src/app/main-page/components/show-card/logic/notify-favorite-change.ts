@@ -1,7 +1,8 @@
 import type { Show } from '@tvmaze/contracts';
 
-import type { FavoriteChange } from '~/app/main-page/logic/tasks/toggle-favorite';
 import { toast } from '~/ui-kit/toast';
+
+import type { FavoriteChange } from './tasks/toggle-favorite';
 
 export const notifyFavoriteChange = (show: Show, change: FavoriteChange | null): void => {
   if (change === null) return;

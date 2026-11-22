@@ -1,10 +1,13 @@
 import { fetchCurrentUser } from '~/api/auth';
-import { useSessionStore } from '~/app/stores/session.store';
+import { useSessionStore } from '~/stores/session.store';
 
 export const restoreSession = async (): Promise<void> => {
+  const session = useSessionStore.getState();
+
   try {
-    useSessionStore.getState().signIn(await fetchCurrentUser());
+    const { user } = await fetchCurrentUser();
+    session.signIn({ user });
   } catch {
-    useSessionStore.getState().signOut();
+    session.signOut();
   }
 };

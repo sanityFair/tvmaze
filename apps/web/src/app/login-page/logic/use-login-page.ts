@@ -1,8 +1,9 @@
 import { type ChangeEvent, type FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router';
 
-import { HOME_PATH } from '~/app/logic/paths';
-import { logIn } from '~/app/logic/tasks/log-in';
+import { HOME_PATH } from '~/lib/paths';
+
+import { logIn } from './tasks/log-in';
 
 type LoginStatus = 'idle' | 'submitting' | 'invalid-email' | 'failed';
 
@@ -22,7 +23,7 @@ export const useLoginPage = () => {
     if (isSubmitting) return;
 
     setStatus('submitting');
-    const result = await logIn(email);
+    const result = await logIn({ email });
     if (result !== 'signed-in') setStatus(result);
   };
 

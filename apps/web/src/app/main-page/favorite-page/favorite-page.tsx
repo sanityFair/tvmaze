@@ -11,7 +11,12 @@ import { VhsShelf } from './vhs-shelf/vhs-shelf';
 
 const MEDIA_CLASS = 'flex size-14 items-center justify-center rounded-full border';
 
-export const FavoritePage = () => {
+type FavoritePageProps = {
+  onBack: () => void;
+  onRetry: () => void;
+};
+
+export const FavoritePage = ({ onBack, onRetry }: FavoritePageProps) => {
   const favorites = useFavoritePage();
 
   return (
@@ -20,7 +25,7 @@ export const FavoritePage = () => {
       className="flex animate-fade flex-col gap-4 px-4 pt-4 pb-16 sm:px-8"
     >
       <div className="flex flex-col gap-3 border-b border-destructive/40 pb-4">
-        <Button variant="ghost" size="sm" onClick={favorites.onBack} className="-ml-2 w-fit gap-2">
+        <Button variant="ghost" size="sm" onClick={onBack} className="-ml-2 w-fit gap-2">
           <ArrowLeftIcon aria-hidden />
           Back to search
         </Button>
@@ -60,7 +65,7 @@ export const FavoritePage = () => {
             title="Couldn’t load favorites"
             description="Make sure the API is running, then try again."
           />
-          <Button variant="outline" onClick={favorites.onRetry}>
+          <Button variant="outline" onClick={onRetry}>
             Try again
           </Button>
         </div>

@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router';
 
-import { LOGIN_PATH, type LoginRouteState } from '~/app/logic/paths';
+import { LOGIN_PATH, type LoginRouteState } from '~/lib/paths';
 
 export const useSignInRoute = () => {
   const navigate = useNavigate();

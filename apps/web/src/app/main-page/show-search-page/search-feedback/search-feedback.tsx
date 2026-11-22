@@ -4,12 +4,11 @@ import { FeedbackMessage } from '~/app/main-page/components/feedback-message/fee
 import { Alert, AlertDescription, AlertTitle } from '~/ui-kit/alert';
 import { Spinner } from '~/ui-kit/spinner';
 
-import type { SearchStatus } from '../logic/get-search-status';
 import nothingFoundIllustration from './nothing-found.svg';
 import searchShowsIllustration from './search-shows.svg';
 
 type SearchFeedbackProps = {
-  status: SearchStatus;
+  status: 'idle' | 'loading' | 'error' | 'empty' | 'results';
   errorMessage: string | null;
   inlineErrorMessage: string | null;
 };

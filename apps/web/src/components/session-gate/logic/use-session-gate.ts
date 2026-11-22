@@ -1,7 +1,7 @@
 import { useLocation } from 'react-router';
 
-import { HOME_PATH, LOGIN_PATH, type LoginRouteState } from '~/app/logic/paths';
-import { selectSessionStatus, useSessionStore } from '~/app/stores/session.store';
+import { HOME_PATH, LOGIN_PATH, type LoginRouteState } from '~/lib/paths';
+import { selectSessionStatus, useSessionStore } from '~/stores/session.store';
 
 export type SessionAccess = 'user' | 'guest';
 

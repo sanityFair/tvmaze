@@ -1,24 +1,27 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 
-import { HOME_PATH } from '~/app/logic/paths';
-import { logOut } from '~/app/logic/tasks/log-out';
-import { useFavoritesRoute } from '~/app/main-page/logic/use-favorites-route';
-import { selectUserEmail, useSessionStore } from '~/app/stores/session.store';
+import { FAVORITES_PATH, HOME_PATH } from '~/lib/paths';
+import { selectUserEmail, useSessionStore } from '~/stores/session.store';
+
+import { logOut } from './tasks/log-out';
 
 export const useUserMenu = () => {
   const navigate = useNavigate();
-  const favoritesRoute = useFavoritesRoute();
+  const { pathname } = useLocation();
   const email = useSessionStore(selectUserEmail);
   const [isLoggingOut, setLoggingOut] = useState(false);
+
+  const handleLogOut = () => {
+    setLoggingOut(true);
+    const isOnPersonalPage = pathname === FAVORITES_PATH;
+    if (isOnPersonalPage) navigate(HOME_PATH, { replace: true });
+    logOut();
+  };
 
   return {
     email: email ?? '',
     isLoggingOut,
-    onLogOut: () => {
-      setLoggingOut(true);
-      if (favoritesRoute.isOpen) navigate(HOME_PATH, { replace: true });
-      logOut();
-    },
+    onLogOut: handleLogOut,
   };
 };

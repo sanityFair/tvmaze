@@ -59,17 +59,19 @@ Git-хуки (Husky): `pre-commit` запускает lint-staged (oxlint --fix 
 
 ### web (`apps/web/src`)
 
-Структура по дереву UI в духе Simple Architecture (см. `.claude/rules/architecture.md`). Прикладные слои (компоненты, Presenter-ы, Tasks, хранилища) живут только внутри `app/`; вне его — только технические модули (`api/`, `lib/`, `ui-kit/`):
+Структура по дереву UI в духе Simple Architecture (см. `.claude/rules/architecture.md`). `app/` содержит только дерево UI; общее для независимых поддеревьев лежит рядом с ним в `src/` (`stores/`, `components/`, `hooks/`), технические модули — `api/`, `lib/`, `ui-kit/`. `logic/` компонента приватна: её импортирует только сам компонент (проверяет `pnpm lint:deps`).
 
 - `main.tsx` — точка входа; монтирует `App` в `StrictMode` и `BrowserRouter`, импортирует `index.css`.
-- `app/` — корень приложения; папки повторяют дерево UI (правила маршрутов — раздел 10 в `.claude/rules/architecture.md`):
-  - `app.tsx` — рамка (`backdrop-side/`, `<main>`, `Toaster`) и маршруты `/login` → `login-page/`, `/*` → `main-page/`.
-  - `main-page/` — шапка `main-header/` (гостю — кнопка Sign in, пользователю — `user-menu/` с email и Logout, кнопка избранного) и вложенные маршруты: `/` → `show-search-page/`, `/favorites` → `favorite-page/`.
-  - Поиск доступен без входа. `/favorites` закрыт layout-маршрутом `app/components/session-gate/`: пока сессия не проверена — спиннер, без сессии — редирект на `/login` с `state.from`. Гостю Task `toggleFavorite` возвращает `'sign-in-required'`, и Presenter карточки открывает логин (`main-page/logic/use-sign-in-route.ts`).
-  - Открытие/закрытие избранного — `main-page/logic/use-favorites-route.ts`. Шоу, снятые с избранного на этом экране, остаются на полке приглушёнными до ухода с экрана (`favorite-page/logic/use-retained-shows.ts`).
-- `components/` — в `components/` ближайшего общего владельца: `app/components/session-gate` (App и MainPage), `main-page/components/` — `show-card`, `feedback-message` (страницы поиска и избранного).
-- `logic/` — Presenter и Tasks владельца: `app/logic/` — `paths.ts`, Tasks сессии (`restore-session` — `GET /api/auth/me` при старте, сервер продлевает cookie; `log-in`, `log-out`, `watch-session-expiry` — выход из сессии при 401 из `apiRequest`); `main-page/logic/tasks/` — `load-favorites`, `toggle-favorite`. `main-page/logic/use-main-page.ts` загружает избранное при входе и сбрасывает при выходе.
-- `stores/` — хранилище лежит у ближайшего общего владельца: `app/stores/session.store.ts` (`status: 'unknown' | 'authenticated' | 'anonymous'` и `user`) нужен всему приложению; `main-page/stores/favorites.store.ts` — только поддереву `main-page` (шапка, карточки, страница избранного). Хранилище не кладётся в `logic/`.
+- `app/` — корень дерева UI (правила маршрутов — раздел 10 в `.claude/rules/architecture.md`):
+  - `app.tsx` — рамка (`backdrop-side/`, `<main>`, `Toaster`) и маршруты `/login` → `login-page/`, `/*` → `main-page/`. `app/logic/` — `use-app` и Tasks `restore-session` (`GET /api/auth/me` при старте, сервер продлевает cookie) и `watch-session-expiry` (выход из сессии при 401 из `apiRequest`).
+  - `login-page/` — форма входа, Task `log-in`.
+  - `main-page/` — шапка `main-header/` (гостю — кнопка Sign in, пользователю — `user-menu/` с email и Logout, Task `log-out`; кнопка избранного) и вложенные маршруты: `/` → `show-search-page/`, `/favorites` → `favorite-page/`. `main-page/logic/use-main-page.ts` загружает избранное при входе (Task `load-favorites`), сбрасывает при выходе и передаёт шапке и странице избранного обработчики (`onFavoritesOpenChange`, `onBack`, `onRetry`) пропсами.
+  - `main-page/components/` — `show-card` (Task `toggle-favorite`: оптимистичное обновление с откатом; гостю — `'sign-in-required'`, и Presenter открывает логин) и `feedback-message`. `main-page/stores/favorites.store.ts` — только `setStatus`, `setShows`, `reset`.
+  - Шоу, снятые с избранного на этом экране, остаются на полке приглушёнными до ухода с экрана (`favorite-page/logic/use-retained-shows.ts`).
+- `stores/session.store.ts` — `status: 'unknown' | 'authenticated' | 'anonymous'`, `user`, действия `signIn({ user })`, `signOut()`.
+- `components/session-gate/` — layout-маршрут доступа: пока сессия не проверена — спиннер, без сессии — редирект на `/login` с `state.from`, с сессией со страницы логина — обратно.
+- `hooks/use-sign-in-route.ts` — переход на логин с возвратом; нужен шапке и карточке.
+- `lib/paths.ts` — пути маршрутов и `LoginRouteState`.
 - `api/` — HTTP-клиент для бэкенда (`apiRequest`, `HttpError`, `onUnauthorized`). Сессия — HttpOnly-cookie, фронтенд токен не видит и не хранит.
 - `ui-kit/` — переиспользуемые примитивы shadcn/ui. **Это алиас `ui` для shadcn** (см. `components.json`): `pnpm dlx shadcn add <component>` запускается внутри `apps/web` и устанавливает компонент в `src/ui-kit/`.
 - `lib/` — общие технические утилиты. `cn` реэкспортируется из npm-пакета `cn` через `lib/utils.ts`.

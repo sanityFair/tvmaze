@@ -1,10 +1,10 @@
 import { Route, Routes } from 'react-router';
 
+import { SessionGate } from '~/components/session-gate/session-gate';
+import { LOGIN_PATH } from '~/lib/paths';
 import { Toaster } from '~/ui-kit/toast';
 
 import { BackdropSide } from './backdrop-side/backdrop-side';
-import { SessionGate } from './components/session-gate/session-gate';
-import { LOGIN_PATH } from './logic/paths';
 import { useApp } from './logic/use-app';
 import { LoginPage } from './login-page/login-page';
 import { MainPage } from './main-page/main-page';

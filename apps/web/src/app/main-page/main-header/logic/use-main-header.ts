@@ -1,23 +1,20 @@
-import { useFavoritesRoute } from '~/app/main-page/logic/use-favorites-route';
-import { useSignInRoute } from '~/app/main-page/logic/use-sign-in-route';
-import { selectFavoritesCount, useFavoritesStore } from '~/app/main-page/stores/favorites.store';
-import { selectSessionStatus, useSessionStore } from '~/app/stores/session.store';
+import { useSignInRoute } from '~/hooks/use-sign-in-route';
+import { selectSessionStatus, useSessionStore } from '~/stores/session.store';
+
+import { selectFavoritesCount, useFavoritesStore } from '../../stores/favorites.store';
 
 const pluralRules = new Intl.PluralRules('en-US');
 
 export const useMainHeader = () => {
-  const favoritesRoute = useFavoritesRoute();
   const openSignIn = useSignInRoute();
   const sessionStatus = useSessionStore(selectSessionStatus);
   const favoritesCount = useFavoritesStore(selectFavoritesCount);
+  const showsWord = pluralRules.select(favoritesCount) === 'one' ? 'show' : 'shows';
 
   return {
     sessionStatus,
     onSignIn: openSignIn,
-    isFavoritesOpen: favoritesRoute.isOpen,
-    onFavoritesOpenChange: (open: boolean) =>
-      open ? favoritesRoute.open() : favoritesRoute.close(),
     favoritesCount,
-    favoritesLabel: `Favorites, ${favoritesCount} ${pluralRules.select(favoritesCount) === 'one' ? 'show' : 'shows'}`,
+    favoritesLabel: `Favorites, ${favoritesCount} ${showsWord}`,
   };
 };

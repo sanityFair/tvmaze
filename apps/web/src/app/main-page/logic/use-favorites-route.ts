@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router';
 
-import { FAVORITES_PATH, HOME_PATH } from '~/app/logic/paths';
+import { FAVORITES_PATH, HOME_PATH } from '~/lib/paths';
 
 type FavoritesRouteState = { openedInApp?: boolean } | null;
 

@@ -1,22 +1,13 @@
 const WEB = '^apps/web/src';
 const APP = `${WEB}/app`;
+const SHARED = `${WEB}/(stores|components|hooks)/`;
 
 const rule = (name, comment, from, to) => ({ name, comment, severity: 'error', from, to });
 
 module.exports = {
   forbidden: [
-    rule(
-      'no-circular',
-      'Dependencies must be one-directional (architecture.md, section 1).',
-      {},
-      { circular: true },
-    ),
-    rule(
-      'not-to-unresolvable',
-      'Every import must resolve to a file.',
-      {},
-      { couldNotResolve: true },
-    ),
+    rule('no-circular', 'Dependencies are one-directional.', {}, { circular: true }),
+    rule('not-to-unresolvable', 'Imports must resolve.', {}, { couldNotResolve: true }),
     rule(
       'no-orphans',
       'A module nobody imports is dead code; ui-kit primitives may wait for their first use.',
@@ -25,7 +16,7 @@ module.exports = {
         pathNot: [
           '\\.d\\.ts$',
           '^apps/api/main\\.js$',
-          '(^|/)[^/]+\\.config\\.[cm]?[jt]s$',
+          '\\.config\\.[cm]?[jt]s$',
           `${WEB}/ui-kit/`,
         ],
       },
@@ -44,28 +35,28 @@ module.exports = {
       { path: '^packages/contracts/', dependencyTypesNot: ['type-only'] },
     ),
     rule(
-      'technical-modules-do-not-know-app',
-      'api/, lib/ and ui-kit/ are technical modules below app/.',
+      'technical-modules-stay-below',
+      'api/, lib/ and ui-kit/ know nothing about the application.',
       { path: `${WEB}/(api|lib|ui-kit)/` },
-      { path: `${APP}/` },
+      { path: [`${APP}/`, SHARED] },
     ),
     rule(
-      'ui-kit-has-no-app-logic',
-      'ui-kit does not depend on the backend client (section 9).',
-      { path: `${WEB}/ui-kit/` },
-      { path: `${WEB}/api/` },
+      'shared-modules-do-not-know-app',
+      'stores/, components/ and hooks/ serve the UI tree and never import from it.',
+      { path: SHARED },
+      { path: `${APP}/` },
     ),
     rule(
       'views-do-not-call-api-stores-or-tasks',
       'A View renders data prepared by its Presenter (section 2).',
-      { path: `${APP}/.+\\.tsx$` },
+      { path: `${WEB}/.+\\.tsx$` },
       { path: [`${WEB}/api/`, '\\.store\\.ts$', '/logic/tasks/'] },
     ),
     rule(
       'presenters-do-not-render',
-      'logic/ prepares data; it does not import application components.',
-      { path: '/logic/' },
-      { path: `${APP}/.+\\.tsx$` },
+      'logic/ and hooks/ prepare data; they do not import components.',
+      { path: ['/logic/', `${WEB}/hooks/`] },
+      { path: `${WEB}/(app|components)/.+\\.tsx$` },
     ),
     rule(
       'tasks-do-not-depend-on-react',
@@ -74,7 +65,7 @@ module.exports = {
       {
         path: [
           '(^|/)node_modules/(react|react-dom|react-router)/',
-          `${WEB}/ui-kit/`,
+          `${WEB}/(ui-kit|hooks)/`,
           '/logic/use-[^/]+\\.ts$',
         ],
       },
@@ -83,22 +74,25 @@ module.exports = {
       'stores-stay-thin',
       'Stores hold data only: no API calls, Tasks, Presenters or Views (section 4).',
       { path: '\\.store\\.ts$' },
-      { path: [`${WEB}/api/`, '/logic/', '\\.tsx$'] },
+      { path: [`${WEB}/(api|hooks|components)/`, '/logic/', '\\.tsx$'] },
+    ),
+    rule(
+      'logic-is-private',
+      "A component's logic/ is imported only by that component's own View, Presenter and Tasks.",
+      { path: `${WEB}/(.+)/[^/]+$` },
+      { path: `${WEB}/.+/logic/`, pathNot: `${WEB}/$1/` },
     ),
     rule(
       'app-subtrees-are-independent',
-      'Children of app/ share code only through app/logic, app/stores or app/components (sections 6, 8).',
+      'Children of app/ do not import each other; shared code lives in src/ (sections 6, 8).',
       { path: `${APP}/([^/]+)/` },
-      { path: `${APP}/[^/]+/`, pathNot: `${APP}/($1|logic|stores|components)/` },
+      { path: `${APP}/[^/]+/`, pathNot: `${APP}/$1/` },
     ),
     rule(
       'main-page-subtrees-are-independent',
-      'Pages and the header of main-page share code only through main-page/logic, main-page/stores and main-page/components.',
+      'The header and pages of main-page share only main-page/stores and main-page/components.',
       { path: `${APP}/main-page/([^/]+)/` },
-      {
-        path: `${APP}/main-page/[^/]+/`,
-        pathNot: `${APP}/main-page/($1|logic|stores|components)/`,
-      },
+      { path: `${APP}/main-page/[^/]+/`, pathNot: `${APP}/main-page/($1|stores|components)/` },
     ),
   ],
   options: {

@@ -6,7 +6,12 @@ import { Toggle } from '~/ui-kit/toggle';
 import { useMainHeader } from './logic/use-main-header';
 import { UserMenu } from './user-menu/user-menu';
 
-export const MainHeader = () => {
+type MainHeaderProps = {
+  isFavoritesOpen: boolean;
+  onFavoritesOpenChange: (open: boolean) => void;
+};
+
+export const MainHeader = ({ isFavoritesOpen, onFavoritesOpenChange }: MainHeaderProps) => {
   const header = useMainHeader();
 
   return (
@@ -29,13 +34,13 @@ export const MainHeader = () => {
           <UserMenu />
           <Toggle
             aria-label={header.favoritesLabel}
-            pressed={header.isFavoritesOpen}
-            onPressedChange={header.onFavoritesOpenChange}
+            pressed={isFavoritesOpen}
+            onPressedChange={onFavoritesOpenChange}
             className="h-10 shrink-0 gap-2 rounded-full bg-white/5 px-4 text-sm tabular-nums hover:bg-white/10 aria-pressed:bg-white/15"
           >
             <HeartIcon
               aria-hidden
-              weight={header.isFavoritesOpen ? 'fill' : 'regular'}
+              weight={isFavoritesOpen ? 'fill' : 'regular'}
               className="size-4 text-destructive"
             />
             <span aria-hidden>{header.favoritesCount}</span>

@@ -9,11 +9,8 @@ type FavoritesState = {
 };
 
 type FavoritesActions = {
-  startLoading: () => void;
-  receiveFavorites: (shows: Show[]) => void;
-  failLoading: () => void;
-  addShow: (show: Show) => void;
-  removeShow: (showId: number) => void;
+  setStatus: (update: { status: FavoritesStatus }) => void;
+  setShows: (update: { shows: Show[] }) => void;
   reset: () => void;
 };
 
@@ -21,15 +18,8 @@ const INITIAL_STATE: FavoritesState = { shows: [], status: 'idle' };
 
 export const useFavoritesStore = create<FavoritesState & FavoritesActions>()((set) => ({
   ...INITIAL_STATE,
-  startLoading: () => set({ status: 'loading' }),
-  receiveFavorites: (shows) => set({ shows, status: 'ready' }),
-  failLoading: () => set({ status: 'error' }),
-  addShow: (show) =>
-    set((state) =>
-      state.shows.some(({ id }) => id === show.id) ? state : { shows: [show, ...state.shows] },
-    ),
-  removeShow: (showId) =>
-    set((state) => ({ shows: state.shows.filter(({ id }) => id !== showId) })),
+  setStatus: ({ status }) => set({ status }),
+  setShows: ({ shows }) => set({ shows }),
   reset: () => set(INITIAL_STATE),
 }));
 

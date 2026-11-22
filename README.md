@@ -87,15 +87,15 @@ Sessions are signed tokens, so any function instance can verify them. The TVMaze
 
 ## API
 
-| Method | Path                                   | Auth    | Description                                      |
-| ------ | -------------------------------------- | ------- | ------------------------------------------------ |
-| GET    | `/api/shows?q=&genre=&page=&pageSize=` | —       | Search shows, filter by genre, paginate          |
-| POST   | `/api/auth/login`                      | —       | Body `{ "email": "…" }`; sets the session cookie |
-| POST   | `/api/auth/logout`                     | —       | Clears the session cookie                        |
-| GET    | `/api/auth/me`                         | session | Current user; extends the session                |
-| GET    | `/api/favorites`                       | session | The user's favorite shows, most recent first     |
-| PUT    | `/api/favorites/:showId`               | session | Add a show to favorites                          |
-| DELETE | `/api/favorites/:showId`               | session | Remove a show from favorites                     |
+| Method | Path                                   | Auth    | Description                                                   |
+| ------ | -------------------------------------- | ------- | ------------------------------------------------------------- |
+| GET    | `/api/shows?q=&genre=&page=&pageSize=` | —       | Search shows, filter by genre, paginate                       |
+| POST   | `/api/auth/login`                      | —       | Body `{ "email": "…" }` → `{ user }`; sets the session cookie |
+| POST   | `/api/auth/logout`                     | —       | Clears the session cookie                                     |
+| GET    | `/api/auth/me`                         | session | `{ user }`; extends the session                               |
+| GET    | `/api/favorites`                       | session | The user's favorite shows, most recent first                  |
+| PUT    | `/api/favorites/:showId`               | session | Add a show to favorites                                       |
+| DELETE | `/api/favorites/:showId`               | session | Remove a show from favorites                                  |
 
 The session is an HttpOnly cookie `tvmaze_session` holding an HMAC-signed `{ email, exp }` token valid for 7 days. Routes marked _session_ answer 401 without it.
 
@@ -109,21 +109,22 @@ The web app follows Simple Architecture (View / Presenter / Tasks / stores), and
 apps/
 ├── web/                      # React frontend (Vite)
 │   └── src/
-│       ├── app/                  # Application layers, structured by the UI tree
+│       ├── app/                  # The UI tree only
 │       │   ├── app.tsx               # Frame and top-level routes: /login, /*
-│       │   ├── logic/                # Paths and session tasks (log in, log out, restore)
-│       │   ├── stores/               # Zustand: session
-│       │   ├── components/           # session-gate (route access by session)
-│       │   ├── login-page/
+│       │   ├── logic/                # Session restore and expiry tasks
+│       │   ├── login-page/           # Log-in task
 │       │   └── main-page/            # Header + nested routes
-│       │       ├── main-header/          # Sign in / user menu, favorites toggle
-│       │       ├── components/           # show-card, feedback-message
-│       │       ├── logic/tasks/          # load-favorites, toggle-favorite
+│       │       ├── main-header/          # Sign in / user menu (log-out task), favorites toggle
+│       │       ├── components/           # show-card (toggle-favorite task), feedback-message
+│       │       ├── logic/                # Favorites loading and route
 │       │       ├── stores/               # Zustand: favorites
 │       │       ├── show-search-page/     # /  — search state in the URL
 │       │       └── favorite-page/        # /favorites — VHS shelf
+│       ├── stores/               # Zustand: session
+│       ├── components/           # session-gate (route access by session)
+│       ├── hooks/                # Hooks shared by independent subtrees
 │       ├── api/                  # HTTP client for the backend
-│       ├── lib/                  # Technical utilities
+│       ├── lib/                  # Route paths and technical utilities
 │       └── ui-kit/               # shadcn/ui primitives
 └── api/                      # NestJS backend
     └── src/

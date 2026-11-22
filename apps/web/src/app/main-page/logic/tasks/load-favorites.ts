@@ -1,20 +1,26 @@
 import { fetchFavorites } from '~/api/favorites';
-import { useFavoritesStore } from '~/app/main-page/stores/favorites.store';
-import { useSessionStore } from '~/app/stores/session.store';
+import { useSessionStore } from '~/stores/session.store';
+
+import { useFavoritesStore } from '../../stores/favorites.store';
 
 const getUserEmail = () => useSessionStore.getState().user?.email ?? null;
 
 export const loadFavorites = async (): Promise<void> => {
-  const store = useFavoritesStore.getState();
-  if (store.status === 'loading') return;
+  const favorites = useFavoritesStore.getState();
+  if (favorites.status === 'loading') return;
 
-  const email = getUserEmail();
-  store.startLoading();
+  const requestedFor = getUserEmail();
+  favorites.setStatus({ status: 'loading' });
 
   try {
     const shows = await fetchFavorites();
-    if (getUserEmail() === email) useFavoritesStore.getState().receiveFavorites(shows);
+    const isSameUser = getUserEmail() === requestedFor;
+    if (!isSameUser) return;
+
+    favorites.setShows({ shows });
+    favorites.setStatus({ status: 'ready' });
   } catch {
-    if (getUserEmail() === email) useFavoritesStore.getState().failLoading();
+    const isSameUser = getUserEmail() === requestedFor;
+    if (isSameUser) favorites.setStatus({ status: 'error' });
   }
 };

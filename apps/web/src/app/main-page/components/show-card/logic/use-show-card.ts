@@ -1,10 +1,10 @@
 import type { Show } from '@tvmaze/contracts';
 
-import { toggleFavorite } from '~/app/main-page/logic/tasks/toggle-favorite';
-import { useSignInRoute } from '~/app/main-page/logic/use-sign-in-route';
 import { selectIsFavorite, useFavoritesStore } from '~/app/main-page/stores/favorites.store';
+import { useSignInRoute } from '~/hooks/use-sign-in-route';
 
 import { notifyFavoriteChange } from './notify-favorite-change';
+import { toggleFavorite } from './tasks/toggle-favorite';
 
 const getYears = ({ premiered, ended }: Show): string | null => {
   const start = premiered?.slice(0, 4);
@@ -34,7 +34,7 @@ export const useShowCard = (show: Show) => {
     isFavorite,
     favoriteLabel: `Favorite ${show.name}`,
     onToggleFavorite: () => {
-      toggleFavorite(show).then((result) => {
+      toggleFavorite({ show }).then((result) => {
         if (result === 'sign-in-required') openSignIn();
         else notifyFavoriteChange(show, result);
       });

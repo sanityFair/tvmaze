@@ -9,14 +9,14 @@ type SessionState = {
 };
 
 type SessionActions = {
-  signIn: (user: SessionUser) => void;
+  signIn: (session: { user: SessionUser }) => void;
   signOut: () => void;
 };
 
 export const useSessionStore = create<SessionState & SessionActions>()((set) => ({
   status: 'unknown',
   user: null,
-  signIn: (user) => set({ status: 'authenticated', user }),
+  signIn: ({ user }) => set({ status: 'authenticated', user }),
   signOut: () => set({ status: 'anonymous', user: null }),
 }));
 
